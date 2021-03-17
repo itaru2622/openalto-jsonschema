@@ -1,0 +1,96 @@
+iana-alto-address-type-registry:
+  ipv4:
+    id: ipv4
+    address-encoding: "See Section 10.4.3 of [RFC7285](https://www.iana.org/go/rfc7285)"
+    address-encoding-pattern: "(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))(\\.|$){4}"
+    prefix-encoding: "See Section 10.4.3 of [RFC7285](https://www.iana.org/go/rfc7285)"
+    prefix-encoding-pattern: "((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))(\\.|(\\/(([12]?[0-9])|(3[0-2]))$))){4}"
+    mapping-to-from-ipv4-v6: "Direct mapping to IPv4"
+    reference: "[RFC7285](https://www.iana.org/go/rfc7285)"
+  ipv6:
+    id: ipv6
+    address-encoding: "See Section 10.4.3 of [RFC7285](https://www.iana.org/go/rfc7285)"
+    address-encoding-pattern: "((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))"
+    prefix-encoding: "See Section 10.4.3 of [RFC7285](https://www.iana.org/go/rfc7285)"
+    prefix-encoding-pattern: "((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))\\/(([1-5]?[0-9])|(6[0-4]))"
+    mapping-to-from-ipv4-v6: "Direct mapping to IPv6"
+    reference: "[RFC7285](https://www.iana.org/go/rfc7285)"
+iana-alto-error-code-registry:
+  E_SYNTAX:
+    error-code: E_SYNTAX
+    intended-usage: "Parsing error in request (including identifiers). See Section 8.5.2 of [RFC7285](https://www.iana.org/go/rfc7285)"
+    reference: "[RFC7285](https://www.iana.org/go/rfc7285)"
+  E_MISSING_FIELD:
+    error-code: E_MISSING_FIELD
+    intended-usage: "A required JSON field is missing. See Section 8.5.2 of [RFC7285](https://www.iana.org/go/rfc7285)"
+    reference: "[RFC7285](https://www.iana.org/go/rfc7285)"
+  E_INVALID_FIELD_TYPE:
+    error-code: E_INVALID_FIELD_TYPE
+    intended-usage: "The type of the value of a JSON field is invalid. See Section 8.5.2 of [RFC7285](https://www.iana.org/go/rfc7285)"
+    reference: "[RFC7285](https://www.iana.org/go/rfc7285)"
+  E_INVALID_FIELD_VALUE:
+    error-code: E_INVALID_FIELD_VALUE
+    intended-usage: "The value of a JSON field is invalid. See Section 8.5.2 of [RFC7285](https://www.iana.org/go/rfc7285)"
+    reference: "[RFC7285](https://www.iana.org/go/rfc7285)"
+iana-alto-cost-metric-registry:
+  # Initial cost metrics defined in RFC7285
+  routingcost:
+    id: routingcost
+    intended-semantics: "See Section 7.1.1 of [RFC7285](https://www.iana.org/go/rfc7285)"
+    reference: "[RFC7285](https://www.iana.org/go/rfc7285)"
+  "priv:":
+    id: "priv:"
+    intended-semantics: "Private use"
+    reference: "[RFC7285](https://www.iana.org/go/rfc7285)"
+    private: true
+  # Additional performance cost metrics defined in I-D.ietf-alto-performance-metrics
+  delay-ow:
+    id: delay-ow
+    intended-semantics: "See Section 3.1 of [I-D.ietf-alto-performance-metrics](https://tools.ietf.org/html/draft-ietf-alto-performance-metrics-15)"
+    performance-metric: true
+    reference: "[I-D.ietf-alto-performance-metrics](https://tools.ietf.org/html/draft-ietf-alto-performance-metrics-15)"
+  delay-rt:
+    id: delay-rt
+    intended-semantics: "See Section 3.2 of [I-D.ietf-alto-performance-metrics](https://tools.ietf.org/html/draft-ietf-alto-performance-metrics-15)"
+    performance-metric: true
+    reference: "[I-D.ietf-alto-performance-metrics](https://tools.ietf.org/html/draft-ietf-alto-performance-metrics-15)"
+  delay-variation:
+    id: delay-variation
+    intended-semantics: "See Section 3.3 of [I-D.ietf-alto-performance-metrics](https://tools.ietf.org/html/draft-ietf-alto-performance-metrics-15)"
+    performance-metric: true
+    reference: "[I-D.ietf-alto-performance-metrics](https://tools.ietf.org/html/draft-ietf-alto-performance-metrics-15)"
+  hopcount:
+    id: hopcount
+    intended-semantics: "See Section 3.4 of [I-D.ietf-alto-performance-metrics](https://tools.ietf.org/html/draft-ietf-alto-performance-metrics-15)"
+    performance-metric: true
+    reference: "[I-D.ietf-alto-performance-metrics](https://tools.ietf.org/html/draft-ietf-alto-performance-metrics-15)"
+  lossrate:
+    id: lossrate
+    intended-semantics: "See Section 3.5 of [I-D.ietf-alto-performance-metrics](https://tools.ietf.org/html/draft-ietf-alto-performance-metrics-15)"
+    performance-metric: true
+    reference: "[I-D.ietf-alto-performance-metrics](https://tools.ietf.org/html/draft-ietf-alto-performance-metrics-15)"
+  tput:
+    id: tput
+    intended-semantics: "See Section 4.1 of [I-D.ietf-alto-performance-metrics](https://tools.ietf.org/html/draft-ietf-alto-performance-metrics-15)"
+    performance-metric: true
+    reference: "[I-D.ietf-alto-performance-metrics](https://tools.ietf.org/html/draft-ietf-alto-performance-metrics-15)"
+  bw-residual:
+    id: bw-residual
+    intended-semantics: "See Section 4.2 of [I-D.ietf-alto-performance-metrics](https://tools.ietf.org/html/draft-ietf-alto-performance-metrics-15)"
+    performance-metric: true
+    reference: "[I-D.ietf-alto-performance-metrics](https://tools.ietf.org/html/draft-ietf-alto-performance-metrics-15)"
+  bw-maxres:
+    id: bw-maxres
+    intended-semantics: "See Section 4.3 of [I-D.ietf-alto-performance-metrics](https://tools.ietf.org/html/draft-ietf-alto-performance-metrics-15)"
+    performance-metric: true
+    reference: "[I-D.ietf-alto-performance-metrics](https://tools.ietf.org/html/draft-ietf-alto-performance-metrics-15)"
+iana-alto-endpoint-property-type-registry:
+  pid:
+    id: pid
+    intended-semantics: "See Section 7.1.1 of [RFC7285](https://www.iana.org/go/rfc7285)"
+    reference: "[RFC7285](https://www.iana.org/go/rfc7285)"
+  "priv:":
+    id: "priv:"
+    intended-semantics: "Private use"
+    reference: "[RFC7285](https://www.iana.org/go/rfc7285)"
+    private: true

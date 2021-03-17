@@ -1,0 +1,44 @@
+!Defaults
+site: .
+---
+$schema: "http://json-schema.org/draft-07/schema#"
+$id: !Format "{site}/draft-ietf-alto-performance-metrics.json"
+# See draft-ietf-alto-performance-metrics-15
+definitions:
+  CostType:
+    allOf:
+    - $ref: !Format "{site}/rfc7285.json#/definitions/CostType"
+    - properties:
+        cost-metric:
+          anyOf:
+          - $ref: !Format "{site}/rfc7285.json#/definitions/CostMetric"
+          - anyOf: !Loop
+              over: !Filter
+                over: !Var iana-alto-cost-metric-registry
+                as: cost-metric
+                test: !Exists cost-metric.performance-metric
+              as: cost-metric
+              template:
+                pattern: !Format "{cost-metric.id}-(p0*([1-9]?[0-9](\\.[0-9]*)?|100)|min|max|median|mean|stddev|stdvar)"
+        cost-context:
+          $ref: "#/definitions/CostContext"
+        description:
+          type: string
+  CostContext:
+    type: object
+    properties:
+      cost-source:
+        type: string
+        enum:
+        - nominal
+        - sla
+        - import
+        - estimation
+      parameters:
+        anyOf:
+        - type: string
+        - type: number
+        - type: array
+        - type: boolean
+        - type: object
+          additionalProperties: true

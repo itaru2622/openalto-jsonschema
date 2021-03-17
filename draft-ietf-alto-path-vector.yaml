@@ -1,0 +1,31 @@
+!Defaults
+site: .
+---
+$schema: "http://json-schema.org/draft-07/schema#"
+$id: !Format "{site}/draft-ietf-alto-path-vector.json"
+# See draft-ietf-alto-path-vector-14
+definitions:
+  PVReqFilteredCostMap:
+    allOf:
+    - $ref: !Format "{site}/rfc7285.json#/definitions/ReqFilteredCostMap"
+    - properties:
+        ane-property-names:
+          type: array
+          items:
+            $ref: !Format "{site}/draft-ietf-alto-unified-props-new.json#/definitions/EntityPropertyName"
+  PVFilteredCostMapCapabilities:
+    allOf:
+    - $ref: !Format "{site}/rfc7285.json#/definitions/FilteredCostMapCapabilities"
+    - properties:
+        ane-property-names:
+          type: array
+          items:
+            $ref: !Format "{site}/draft-ietf-alto-unified-props-new.json#/definitions/EntityPropertyName"
+  PVReqEndpointCostMap:
+    allOf:
+    - $ref: !Format "{site}/rfc7285.json#/definitions/ReqEndpointCostMap"
+    - properties:
+        ane-property-names:
+          type: array
+          items:
+            $ref: !Format "{site}/draft-ietf-alto-unified-props-new.json#/definitions/EntityPropertyName"

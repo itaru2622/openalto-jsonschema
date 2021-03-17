@@ -1,0 +1,11 @@
+{
+  "add": {
+    "my-network-map": {
+      "resource-id": "my-network-map"
+    },
+    "my-routingcost-map": {
+      "resource-id": "my-routingcost-map"
+    }
+  }
+}
+

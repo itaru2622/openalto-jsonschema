@@ -1,0 +1,85 @@
+!Defaults
+site: .
+---
+$schema: "http://json-schema.org/draft-07/schema#"
+$id: !Format "{site}/draft-ietf-alto-cdni-request-routing-alto.json"
+# See draft-ietf-alto-cdni-request-routing-alto-16
+definitions:
+  InfoResourceCDNIAdvertisement:
+    allOf:
+    - $ref: !Format "{site}/rfc7285.json#/definitions/ResponseEntityBase"
+    - properties:
+        cdni-advertisement:
+          $ref: "#/definitions/CDNIAdvertisementData"
+      required:
+      - cdni-advertisement
+  CDNIAdvertisementData:
+    type: object
+    properties:
+      capabilities-with-footprints:
+        type: array
+        items:
+          $ref: "#/definitions/BaseAdvertisementObject"
+    required:
+    - capabilities-with-footprints
+    additionalProperties: true
+  BaseAdvertisementObject:
+    type: object
+    properties:
+      capability-type:
+        type: string
+      capability-value:
+        anyOf:
+        - type: string
+        - type: number
+        - type: array
+        - type: boolean
+        - type: "null"
+        - type: object
+          additionalProperties: true
+      footprints:
+        type: array
+        items:
+          $ref: "#/definitions/Footprint"
+    required:
+    - capability-type
+    - capability-value
+    - footprints
+    additionalProperties: true
+  Footprint:
+    type: object
+    properties:
+      footprint-type:
+        type: string
+      footprint-value:
+        type: array
+        items:
+          type: string
+        minItems: 1
+    additionalProperties: true
+  CDNICapability:
+    type: object
+    properties:
+      capability-type:
+        type: string
+      capability-value:
+        anyOf:
+        - type: string
+        - type: number
+        - type: array
+        - type: boolean
+        - type: "null"
+        - type: object
+          additionalProperties: true
+    required:
+    - capability-type
+    - capability-value
+    additionalProperties: true
+  ReqFilteredCDNIAdvertisement:
+    type: object
+    properties:
+      cdni-capabilities:
+        type: array
+        items:
+          $ref: "#/definitions/CDNICapability"
+    additionalProperties: true

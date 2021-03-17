@@ -1,0 +1,22 @@
+{
+  "meta" : {
+    "vtag" : {
+       "resource-id": "my-default-network-map",
+       "tag": "c0ce023b8678a7b9ec00324673b98e54656d1f6d"
+    }
+  },
+  "network-map" : {
+    "PID1" : {
+      "ipv4" : [
+        "192.0.2.0/24",
+        "198.51.100.0/24"
+      ]
+    },
+    "PID2" : {
+      "ipv4": [
+        "198.51.100.128/24"
+      ]
+    }
+  }
+}
+
