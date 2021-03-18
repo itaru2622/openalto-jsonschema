@@ -1,0 +1,14 @@
+{
+    "multi-cost-types" : [
+        {"cost-mode": "numerical", "cost-metric": "routingcost"},
+        {"cost-mode": "numerical", "cost-metric": "shoesize"}
+    ],
+    "or-constraints" : [
+        ["[0] ge 5", "[0] le 10"],
+        ["[1] eq 0"]
+    ],
+    "pids" : {
+        "srcs" : [ "PID1", "PID2" ],
+        "dsts" : [ "PID1", "PID2", "PID3" ]
+    }
+}

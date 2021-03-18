@@ -1,0 +1,17 @@
+{
+    "cost-type" : {},
+    "multi-cost-types" : [
+        {"cost-mode" : "numerical", "cost-metric" : "routingcost"},
+        {"cost-mode" : "numerical", "cost-metric" : "owdelay"}
+    ],
+    "calendared" : [true, true],
+    "endpoints" : {
+        "srcs": [ "ipv4:192.0.2.2" ],
+        "dsts": [
+            "ipv4:192.0.2.89",
+            "ipv4:198.51.100.34",
+            "ipv4:203.0.113.45",
+            "ipv6:2001:db8::10"
+        ]
+    }
+}

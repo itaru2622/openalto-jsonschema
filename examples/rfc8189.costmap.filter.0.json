@@ -1,0 +1,10 @@
+{
+    "multi-cost-types": [
+        {"cost-mode": "numerical", "cost-metric": "routingcost"},
+        {"cost-mode": "numerical", "cost-metric": "shoesize"}
+    ],
+    "pids" : {
+        "srcs" : [ ],
+        "dsts" : [ ]
+    }
+}

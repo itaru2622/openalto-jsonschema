@@ -1,0 +1,14 @@
+{
+    "add": {
+        "net": {
+            "resource-id": "my-network-map",
+            "tag": "a10ce8b059740b0b2e3f8eb1d4785acd42231bfe"
+        },
+        "routing": {
+            "resource-id": "my-routingcost-map"
+        },
+        "hops": {
+            "resource-id": "my-hopcount-map"
+        }
+    }
+}

@@ -1,0 +1,33 @@
+{
+    "meta" : {
+        "dependent-vtags" : [
+            {
+                "resource-id": "my-default-network-map",
+                "tag": "3ee2cb7e8d63d9fab71b9b34cbf764436315542e"
+            }
+        ],
+        "cost-type" : {
+            "cost-mode" : "numerical",
+            "cost-metric" : "throughputrating"
+        },
+        "calendar-response-attributes" : [
+            {
+                "calendar-start-time" : "Tue, 1 Jul 2019 13:00:00 GMT",
+                "time-interval-size" : 7200,
+                "number-of-intervals" : 12
+            }
+        ]
+    },
+    "cost-map" : {
+        "PID1": {
+            "PID1": [ 1, 12, 14, 18, 14, 14, 14, 18, 19, 20, 11, 12],
+            "PID2": [13,  4, 15, 16, 17, 18, 19, 20, 11, 12, 13, 14],
+            "PID3": [20, 20, 18, 14, 12, 12, 14, 14, 12, 12, 14, 16]
+        },
+        "PID2": {
+            "PID1": [17, 18, 19, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+            "PID2": [20, 20, 18, 16, 14, 14, 14, 16, 16, 16, 14, 16],
+            "PID3": [20, 20, 18, 14, 12, 12, 14, 14, 12, 12, 14, 16]
+        }
+    }
+}

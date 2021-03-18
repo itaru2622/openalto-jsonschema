@@ -1,0 +1,17 @@
+language: python
+python:
+  - "3.7"
+
+install:
+  - make prepare
+
+script:
+  - make
+  - cp -r examples public/
+
+deploy:
+  provider: pages
+  local_dir: public
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  keep_history: true
