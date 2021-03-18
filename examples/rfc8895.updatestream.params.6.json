@@ -1,0 +1,18 @@
+{
+    "add": {
+        "ecspvsub1": {
+            "resource-id": "my-pv",
+            "input": {
+                "cost-type": {
+                    "cost-mode": "array",
+                    "cost-metric": "ane-path"
+                },
+                "endpoints": {
+                    "srcs": [ "ipv4:192.0.2.2" ],
+                    "dsts": [ "ipv4:192.0.2.89", "ipv4:203.0.113.45" ]
+                },
+                "ane-properties": [ "maxresbw", "persistent-entities" ]
+            }
+        }
+    }
+}

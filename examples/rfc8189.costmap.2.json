@@ -1,0 +1,17 @@
+{
+    "meta" : {
+        "dependent-vtags" : [
+            {"resource-id": "my-default-network-map",
+                "tag": "3ee2cb7e8d63d9fab71b9b34cbf764436315542e"
+            }
+        ],
+        "cost-type" : {
+            "cost-mode": "numerical", "cost-metric": "routingcost"
+        }
+    },
+    "cost-map" : {
+        "PID1": { "PID1": 1, "PID3": 10 },
+        "PID2": { "PID2": 1 },
+        "PID3": { "PID3": 1 }
+    }
+}

@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openalto.github.io/alto-jsonschema/draft-ietf-alto-performance-metrics.json",
+  "definitions": {
+    "CostType": {
+      "allOf": [
+        {
+          "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/CostType"
+        },
+        {
+          "properties": {
+            "cost-metric": {
+              "anyOf": [
+                {
+                  "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/CostMetric"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "pattern": "delay-ow-(p0*([1-9]?[0-9](\\.[0-9]*)?|100)|min|max|median|mean|stddev|stdvar)"
+                    },
+                    {
+                      "pattern": "delay-rt-(p0*([1-9]?[0-9](\\.[0-9]*)?|100)|min|max|median|mean|stddev|stdvar)"
+                    },
+                    {
+                      "pattern": "delay-variation-(p0*([1-9]?[0-9](\\.[0-9]*)?|100)|min|max|median|mean|stddev|stdvar)"
+                    },
+                    {
+                      "pattern": "hopcount-(p0*([1-9]?[0-9](\\.[0-9]*)?|100)|min|max|median|mean|stddev|stdvar)"
+                    },
+                    {
+                      "pattern": "lossrate-(p0*([1-9]?[0-9](\\.[0-9]*)?|100)|min|max|median|mean|stddev|stdvar)"
+                    },
+                    {
+                      "pattern": "tput-(p0*([1-9]?[0-9](\\.[0-9]*)?|100)|min|max|median|mean|stddev|stdvar)"
+                    },
+                    {
+                      "pattern": "bw-residual-(p0*([1-9]?[0-9](\\.[0-9]*)?|100)|min|max|median|mean|stddev|stdvar)"
+                    },
+                    {
+                      "pattern": "bw-maxres-(p0*([1-9]?[0-9](\\.[0-9]*)?|100)|min|max|median|mean|stddev|stdvar)"
+                    }
+                  ]
+                }
+              ]
+            },
+            "cost-context": {
+              "$ref": "#/definitions/CostContext"
+            },
+            "description": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "CostContext": {
+      "type": "object",
+      "properties": {
+        "cost-source": {
+          "type": "string",
+          "enum": [
+            "nominal",
+            "sla",
+            "import",
+            "estimation"
+          ]
+        },
+        "parameters": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "array"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "object",
+              "additionalProperties": true
+            }
+          ]
+        }
+      }
+    }
+  }
+}

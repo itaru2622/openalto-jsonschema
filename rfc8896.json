@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openalto.github.io/alto-jsonschema/rfc8896.json",
+  "definitions": {
+    "CalendarAttributes": {
+      "type": "object",
+      "properties": {
+        "cost-type-names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "time-interval-size": {
+          "type": "number"
+        },
+        "number-of-intervals": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "cost-type-names",
+        "time-interval-size",
+        "number-of-intervals"
+      ],
+      "additionalProperties": true
+    },
+    "CalendarResponseAttributes": {
+      "type": "object",
+      "properties": {
+        "cost-type-names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "calendar-start-time": {
+          "type": "string"
+        },
+        "time-interval-size": {
+          "type": "number"
+        },
+        "number-of-intervals": {
+          "type": "number"
+        },
+        "repeated": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "calendar-start-time",
+        "time-interval-size",
+        "number-of-intervals"
+      ],
+      "additionalProperties": true
+    },
+    "ReqFilteredCostMap": {
+      "allOf": [
+        {
+          "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/ReqFilteredCostMap"
+        },
+        {
+          "properties": {
+            "calendared": {
+              "type": "array",
+              "items": {
+                "type": "boolean"
+              },
+              "minItems": 1
+            }
+          }
+        }
+      ]
+    },
+    "ReqEndpointCostMap": {
+      "allOf": [
+        {
+          "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/ReqEndpointCostMap"
+        },
+        {
+          "properties": {
+            "calendared": {
+              "type": "array",
+              "items": {
+                "type": "boolean"
+              },
+              "minItems": 1
+            }
+          }
+        }
+      ]
+    }
+  }
+}

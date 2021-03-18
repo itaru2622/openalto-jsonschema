@@ -1,0 +1,24 @@
+{
+    "add": {
+        "props-3": {
+            "resource-id": "my-props",
+            "input": {
+                "properties" : [ "priv:ietf-bandwidth" ],
+                "endpoints" : [
+                    "ipv4:198.51.100.4",
+                    "ipv4:198.51.100.5"
+                ]
+            }
+        },
+        "props-4": {
+            "resource-id": "my-props",
+            "input": {
+                "properties" : [ "priv:ietf-load" ],
+                "endpoints" : [
+                    "ipv6:2001:db8:100::4",
+                    "ipv6:2001:db8:100::5"
+                ]
+            }
+        }
+    }
+}

@@ -1,0 +1,59 @@
+{
+  "meta" : {
+     "cost-types": {
+        "num-routing": {
+           "cost-mode"  : "numerical",
+           "cost-metric": "routingcost",
+           "description": "My default"
+        },
+        "num-hop":     {
+           "cost-mode"  : "numerical",
+           "cost-metric": "hopcount"
+        },
+        "ord-routing": {
+           "cost-mode"  : "ordinal",
+           "cost-metric": "routingcost"
+        },
+        "ord-hop":     {
+           "cost-mode"  : "ordinal",
+           "cost-metric": "hopcount"
+        }
+     }
+  },
+  "resources" : {
+     "filtered-network-map" : {
+        "uri" : "http://custom.alto.example.com/networkmap/filtered",
+        "media-type" : "application/alto-networkmap+json",
+        "accepts" : "application/alto-networkmapfilter+json",
+        "uses": [ "my-default-network-map" ]
+     },
+     "filtered-cost-map" : {
+        "uri" : "http://custom.alto.example.com/costmap/filtered",
+        "media-type" : "application/alto-costmap+json",
+        "accepts" : "application/alto-costmapfilter+json",
+        "capabilities" : {
+           "cost-constraints" : true,
+           "cost-type-names"  : [ "num-routing", "num-hop",
+                                  "ord-routing", "ord-hop" ]
+        },
+        "uses": [ "my-default-network-map" ]
+     },
+     "ordinal-routing-cost-map" : {
+        "uri" : "http://custom.alto.example.com/ord/routingcost",
+        "media-type" : "application/alto-costmap+json",
+        "capabilities" : {
+           "cost-type-names" : [ "ord-routing" ]
+        },
+        "uses": [ "my-default-network-map" ]
+     },
+     "ordinal-hopcount-cost-map" : {
+        "uri" : "http://custom.alto.example.com/ord/hopcount",
+        "media-type" : "application/alto-costmap+json",
+        "capabilities" : {
+           "cost-type-names" : [ "ord-hop" ]
+        },
+        "uses": [ "my-default-network-map" ]
+     }
+  }
+}
+
