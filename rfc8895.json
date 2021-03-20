@@ -2,6 +2,65 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://openalto.github.io/alto-jsonschema/rfc8895.json",
   "definitions": {
+    "InfoResourceDirectory": {
+      "allOf": [
+        {
+          "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/InfoResourceDirectory"
+        },
+        {
+          "properties": {
+            "resources": {
+              "$ref": "#/definitions/IRDResourceEntries"
+            }
+          }
+        }
+      ]
+    },
+    "IRDResourceEntries": {
+      "allOf": [
+        {
+          "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/IRDResourceEntries"
+        },
+        {
+          "patternProperties": {
+            "^[0-9a-zA-Z-:@_.]{1,64}$": {
+              "$ref": "#/definitions/IRDResourceEntry"
+            }
+          }
+        }
+      ]
+    },
+    "IRDResourceEntry": {
+      "allOf": [
+        {
+          "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/IRDResourceEntry"
+        },
+        {
+          "if": {
+            "properties": {
+              "media-type": {
+                "const": "text/event-stream"
+              },
+              "accepts": {
+                "const": "application/alto-updatestreamparams+json"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "capabilities": {
+                "$ref": "#/definitions/UpdateStreamCapabilities"
+              }
+            },
+            "required": [
+              "uri",
+              "media-type",
+              "capabilities"
+            ]
+          }
+        }
+      ]
+    },
     "SubstreamID": {
       "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/ResourceID"
     },

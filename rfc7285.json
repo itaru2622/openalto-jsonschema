@@ -79,7 +79,7 @@
       "type": "string",
       "oneOf": [
         {
-          "pattern": "ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))(\\.|$){4}"
+          "pattern": "ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\.|$)){4}"
         },
         {
           "pattern": "ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))"
@@ -95,7 +95,7 @@
     },
     "IPv4EndpointPrefix": {
       "type": "string",
-      "pattern": "((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))(\\.|(\\/(([12]?[0-9])|(3[0-2]))$))){4}"
+      "pattern": "(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\.|(\\/(([12]?[0-9])|(3[0-2]))$))){4}"
     },
     "IPv6EndpointPrefix": {
       "type": "string",
@@ -283,6 +283,9 @@
             "properties": {
               "media-type": {
                 "const": "application/alto-endpointprop+json"
+              },
+              "accepts": {
+                "const": "application/alto-endpointpropparams+json"
               }
             }
           },
@@ -304,6 +307,9 @@
             "properties": {
               "media-type": {
                 "const": "application/alto-endpointcost+json"
+              },
+              "accepts": {
+                "const": "application/alto-endpointcostparams+json"
               }
             }
           },
@@ -338,6 +344,23 @@
         },
         {
           "properties": {
+            "meta": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/ResponseMeta"
+                },
+                {
+                  "properties": {
+                    "cost-types": {
+                      "$ref": "#/definitions/IRDMetaCostTypes"
+                    },
+                    "default-alto-network-map": {
+                      "$ref": "#/definitions/ResourceID"
+                    }
+                  }
+                }
+              ]
+            },
             "resources": {
               "$ref": "#/definitions/IRDResourceEntries"
             }
@@ -348,6 +371,26 @@
         }
       ]
     },
+    "ServiceResponseMeta": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ResponseMeta"
+        },
+        {
+          "properties": {
+            "vtag": {
+              "$ref": "#/definitions/VersionTag"
+            },
+            "dependent-vtags": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VersionTag"
+              }
+            }
+          }
+        }
+      ]
+    },
     "InfoResourceNetworkMap": {
       "allOf": [
         {
@@ -355,6 +398,18 @@
         },
         {
           "properties": {
+            "meta": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/ServiceResponseMeta"
+                },
+                {
+                  "required": [
+                    "vtag"
+                  ]
+                }
+              ]
+            },
             "network-map": {
               "$ref": "#/definitions/NetworkMapData"
             }
@@ -398,11 +453,34 @@
         },
         {
           "properties": {
+            "meta": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/ServiceResponseMeta"
+                },
+                {
+                  "properties": {
+                    "dependent-vtags": {
+                      "minItems": 1,
+                      "maxItems": 1
+                    },
+                    "cost-type": {
+                      "$ref": "#/definitions/CostType"
+                    }
+                  },
+                  "required": [
+                    "dependent-vtags",
+                    "cost-type"
+                  ]
+                }
+              ]
+            },
             "cost-map": {
               "$ref": "#/definitions/CostMapData"
             }
           },
           "required": [
+            "meta",
             "cost-map"
           ]
         }
@@ -577,6 +655,9 @@
         },
         {
           "properties": {
+            "meta": {
+              "$ref": "#/definitions/ServiceResponseMeta"
+            },
             "endpoint-properties": {
               "$ref": "#/definitions/EndpointPropertyMapData"
             }
@@ -590,7 +671,10 @@
     "EndpointPropertyMapData": {
       "type": "object",
       "patternProperties": {
-        "(^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))(\\.|$){4})|(^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$)": {
+        "^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\.|$)){4}": {
+          "$ref": "#/definitions/EndpointProps"
+        },
+        "^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$": {
           "$ref": "#/definitions/EndpointProps"
         }
       },
@@ -672,11 +756,29 @@
         },
         {
           "properties": {
+            "meta": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/ServiceResponseMeta"
+                },
+                {
+                  "properties": {
+                    "cost-type": {
+                      "$ref": "#/definitions/CostType"
+                    }
+                  },
+                  "required": [
+                    "cost-type"
+                  ]
+                }
+              ]
+            },
             "endpoint-cost-map": {
               "$ref": "#/definitions/EndpointCostMapData"
             }
           },
           "required": [
+            "meta",
             "endpoint-cost-map"
           ]
         }
@@ -685,7 +787,10 @@
     "EndpointCostMapData": {
       "type": "object",
       "patternProperties": {
-        "(^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))(\\.|$){4})|(^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$)": {
+        "^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\.|$)){4}": {
+          "$ref": "#/definitions/EndpointDstCosts"
+        },
+        "^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$": {
           "$ref": "#/definitions/EndpointDstCosts"
         }
       },
@@ -694,7 +799,30 @@
     "EndpointDstCosts": {
       "type": "object",
       "patternProperties": {
-        "(^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))(\\.|$){4})|(^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$)": {
+        "^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\.|$)){4}": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "array"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": true
+            }
+          ]
+        },
+        "^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$": {
           "anyOf": [
             {
               "type": "string"

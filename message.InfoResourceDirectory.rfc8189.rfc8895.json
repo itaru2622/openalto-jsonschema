@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openalto.github.io/alto-jsonschema/message.InfoResourceDirectory.rfc8189.rfc8895.json",
+  "allOf": [
+    {
+      "$ref": "https://openalto.github.io/alto-jsonschema/rfc8189.json#/definitions/InfoResourceDirectory"
+    },
+    {
+      "$ref": "https://openalto.github.io/alto-jsonschema/rfc8895.json#/definitions/InfoResourceDirectory"
+    }
+  ]
+}

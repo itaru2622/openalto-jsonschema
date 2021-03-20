@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://openalto.github.io/alto-jsonschema/message.InfoResourceCostMap.rfc8189.rfc8896.json",
+  "allOf": [
+    {
+      "$ref": "https://openalto.github.io/alto-jsonschema/rfc8189.json#/definitions/InfoResourceCostMap"
+    },
+    {
+      "$ref": "https://openalto.github.io/alto-jsonschema/rfc8896.json#/definitions/InfoResourceCostMap"
+    }
+  ]
+}

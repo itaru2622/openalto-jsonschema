@@ -10,6 +10,79 @@
     }
   ],
   "definitions": {
+    "InfoResourceDirectory": {
+      "allOf": [
+        {
+          "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/InfoResourceDirectory"
+        },
+        {
+          "properties": {
+            "resources": {
+              "$ref": "#/definitions/IRDResourceEntries"
+            }
+          }
+        }
+      ]
+    },
+    "IRDResourceEntries": {
+      "allOf": [
+        {
+          "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/IRDResourceEntries"
+        },
+        {
+          "patternProperties": {
+            "^[0-9a-zA-Z-:@_.]{1,64}$": {
+              "$ref": "#/definitions/IRDResourceEntry"
+            }
+          }
+        }
+      ]
+    },
+    "IRDResourceEntry": {
+      "allOf": [
+        {
+          "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/IRDResourceEntry"
+        },
+        {
+          "if": {
+            "properties": {
+              "media-type": {
+                "const": "application/alto-costmap+json"
+              },
+              "accepts": {
+                "const": "application/alto-costmapfilter+json"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "capabilities": {
+                "$ref": "#/definitions/FilteredCostMapCapabilities"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "media-type": {
+                "const": "application/alto-endpointcost+json"
+              },
+              "accepts": {
+                "const": "application/alto-endpointcostparams+json"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "capabilities": {
+                "$ref": "#/definitions/FilteredCostMapCapabilities"
+              }
+            }
+          }
+        }
+      ]
+    },
     "FilteredCostMapCapabilities": {
       "allOf": [
         {
@@ -32,74 +105,197 @@
       ]
     },
     "ReqFilteredCostMap": {
+      "type": "object",
+      "properties": {
+        "cost-type": {
+          "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/CostType"
+        },
+        "multi-cost-types": {
+          "type": "array",
+          "items": {
+            "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/CostType"
+          },
+          "minItems": 1
+        },
+        "testable-cost-types": {
+          "type": "array",
+          "items": {
+            "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/CostType"
+          },
+          "minItems": 1
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "or-constraints": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "minItems": 1
+        },
+        "pids": {
+          "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/PIDFilter"
+        }
+      },
+      "additionalProperties": true,
+      "oneOf": [
+        {
+          "required": [
+            "cost-type"
+          ]
+        },
+        {
+          "required": [
+            "multi-cost-types"
+          ]
+        }
+      ]
+    },
+    "InfoResourceCostMap": {
       "allOf": [
         {
-          "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/ReqFilteredCostMap"
+          "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/ResponseEntityBase"
         },
         {
           "properties": {
-            "multi-cost-types": {
-              "type": "array",
-              "items": {
-                "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/CostType"
-              },
-              "minItems": 1
-            },
-            "testable-cost-types": {
-              "type": "array",
-              "items": {
-                "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/CostType"
-              },
-              "minItems": 1
-            },
-            "or-constraints": {
-              "type": "array",
-              "items": {
-                "type": "array",
-                "items": {
-                  "type": "string"
+            "meta": {
+              "allOf": [
+                {
+                  "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/ServiceResponseMeta"
                 },
-                "minItems": 1
-              },
-              "minItems": 1
+                {
+                  "properties": {
+                    "dependent-vtags": {
+                      "minItems": 1,
+                      "maxItems": 1
+                    },
+                    "multi-cost-types": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/CostType"
+                      },
+                      "minItems": 1
+                    }
+                  },
+                  "required": [
+                    "dependent-vtags",
+                    "multi-cost-types"
+                  ]
+                }
+              ]
+            },
+            "cost-map": {
+              "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/CostMapData"
             }
-          }
+          },
+          "required": [
+            "meta",
+            "cost-map"
+          ]
         }
       ]
     },
     "ReqEndpointCostMap": {
+      "type": "object",
+      "properties": {
+        "cost-type": {
+          "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/CostType"
+        },
+        "multi-cost-types": {
+          "type": "array",
+          "items": {
+            "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/CostType"
+          },
+          "minItems": 1
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "testable-cost-types": {
+          "type": "array",
+          "items": {
+            "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/CostType"
+          },
+          "minItems": 1
+        },
+        "or-constraints": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "minItems": 1
+        },
+        "endpoints": {
+          "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/EndpointFilter"
+        }
+      },
+      "additionalProperties": true,
+      "oneOf": [
+        {
+          "required": [
+            "cost-type",
+            "endpoints"
+          ]
+        },
+        {
+          "required": [
+            "multi-cost-types",
+            "endpoints"
+          ]
+        }
+      ]
+    },
+    "InfoResourceEndpointCostMap": {
       "allOf": [
         {
-          "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/ReqEndpointCostMap"
+          "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/ResponseEntityBase"
         },
         {
           "properties": {
-            "multi-cost-types": {
-              "type": "array",
-              "items": {
-                "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/CostType"
-              },
-              "minItems": 1
-            },
-            "testable-cost-types": {
-              "type": "array",
-              "items": {
-                "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/CostType"
-              },
-              "minItems": 1
-            },
-            "or-constraints": {
-              "type": "array",
-              "items": {
-                "type": "array",
-                "items": {
-                  "type": "string"
+            "meta": {
+              "allOf": [
+                {
+                  "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/ServiceResponseMeta"
                 },
-                "minItems": 1
-              },
-              "minItems": 1
+                {
+                  "properties": {
+                    "multi-cost-types": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/CostType"
+                      },
+                      "minItems": 1
+                    }
+                  },
+                  "required": [
+                    "multi-cost-types"
+                  ]
+                }
+              ]
+            },
+            "endpoint-cost-map": {
+              "$ref": "https://openalto.github.io/alto-jsonschema/rfc7285.json#/definitions/EndpointCostMapData"
             }
-          }
+          },
+          "required": [
+            "meta",
+            "endpoint-cost-map"
+          ]
         }
       ]
     }
