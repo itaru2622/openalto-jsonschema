@@ -1,0 +1,19 @@
+!Defaults
+site: .
+rfc7285: true
+feature:
+  rfc7285: !If
+    test: !Var rfc7285
+    then: .rfc7285
+    else: ''
+---
+$schema: "http://json-schema.org/draft-07/schema#"
+$id: !Format "{site}/message.ReqEndpointProp{feature.rfc7285}.json"
+allOf: !Loop
+  over: !Filter
+    over: !Var feature
+    as: featured
+    test: !Var featured
+  index_as: ref
+  template:
+    $ref: !Format "{site}/{ref}.json#/definitions/ReqEndpointProp"

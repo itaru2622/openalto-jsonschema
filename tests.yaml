@@ -1,0 +1,140 @@
+messages:
+  - template: message.InfoResourceDirectory.yaml
+    cases:
+      - features: ['rfc7285']
+        examples:
+          - path: examples/rfc7285.ird.0.json
+            passTest: true
+          - path: examples/rfc7285.ird.1.json
+            passTest: true
+      - features: ['rfc8189']
+      - features: ['rfc7285', 'rfc8895']
+      - features: ['rfc7285', 'rfc8896']
+      - features: ['rfc8189', 'rfc8895']
+      - features: ['rfc8189', 'rfc8896']
+      - features: ['rfc7285', 'rfc8895', 'rfc8896']
+      - features: ['rfc8189', 'rfc8895', 'rfc8896']
+  - template: message.InfoResourceNetworkMap.yaml
+    cases:
+      - features: ['rfc7285']
+        examples:
+          - path: examples/rfc7285.networkmap.0.json
+            passTest: true
+          - path: examples/rfc7285.networkmap.1.json
+            passTest: true
+  - template: message.InfoResourceCostMap.yaml
+    cases:
+      - features: ['rfc7285']
+        examples:
+          - path: examples/rfc7285.costmap.0.json
+            passTest: true
+          - path: examples/rfc7285.costmap.1.json
+            passTest: true
+      - features: ['rfc7285', 'rfc8896']
+        examples:
+          - path: examples/rfc8896.costmap.0.json
+            passTest: true
+      - features: ['rfc8189', 'rfc8896']
+  - template: message.ReqFilteredNetworkMap.yaml
+    cases:
+      - features: ['rfc7285']
+        examples:
+          - path: examples/rfc7285.networkmap.filter.1.json
+            passTest: true
+  - template: message.ReqFilteredCostMap.yaml
+    cases:
+      - features: ['rfc7285']
+        examples:
+          - path: examples/rfc7285.costmap.filter.1.json
+            passTest: true
+      - features: ['rfc8189']
+        examples:
+          - path: examples/rfc8189.costmap.filter.0.json
+            passTest: true
+          - path: examples/rfc8189.costmap.filter.1.json
+            passTest: true
+          - path: examples/rfc8189.costmap.filter.2.json
+            passTest: true
+          - path: examples/rfc8189.costmap.filter.3.json
+            passTest: true
+      - features: ['rfc7285', 'rfc8896']
+        examples:
+          - path: examples/rfc8896.costmap.filter.0.json
+            passTest: true
+      - features: ['rfc8189', 'rfc8896']
+  - template: message.ReqEndpointProp.yaml
+    cases:
+      - features: ['rfc7285']
+        examples:
+          - path: examples/rfc7285.endpointprop.params.0.json
+            passTest: true
+  - template: message.InfoResourceEndpointProperties.yaml
+    cases:
+      - features: ['rfc7285']
+        examples:
+          - path: examples/rfc7285.endpointprop.0.json
+            passTest: true
+  - template: message.ReqEndpointCostMap.yaml
+    cases:
+      - features: ['rfc7285']
+        examples:
+          - path: examples/rfc7285.endpointcost.params.0.json
+            passTest: true
+      - features: ['rfc8189']
+        examples:
+          - path: examples/rfc8189.endpointcost.params.0.json
+            passTest: true
+      - features: ['rfc7285', 'rfc8896']
+        examples:
+          - path: examples/rfc8896.endpointcost.params.0.json
+            passTest: true
+      - features: ['rfc8189', 'rfc8896']
+        examples:
+          - path: examples/rfc8896.endpointcost.params.1.json
+            passTest: false
+  - template: message.InfoResourceEndpointCostMap.yaml
+    cases:
+      - features: ['rfc7285']
+        examples:
+          - path: examples/rfc7285.endpointcost.0.json
+            passTest: true
+      - features: ['rfc7285', 'rfc8896']
+        examples:
+          - path: examples/rfc8896.endpointcost.0.json
+            passTest: true
+      - features: ['rfc8189', 'rfc8896']
+        examples:
+          - path: examples/rfc8896.endpointcost.1.json
+            passTest: true
+  - template: message.UpdateStreamReq.yaml
+    cases:
+      - features: ['rfc8895']
+        examples:
+          - path: examples/rfc8895.updatestream.params.0.json
+            passTest: true
+          - path: examples/rfc8895.updatestream.params.1.json
+            passTest: true
+          - path: examples/rfc8895.updatestream.params.2.json
+            passTest: true
+          - path: examples/rfc8895.updatestream.params.3.json
+            passTest: true
+          - path: examples/rfc8895.updatestream.params.4.json
+            passTest: true
+          - path: examples/rfc8895.updatestream.params.5.json
+            passTest: true
+          - path: examples/rfc8895.updatestream.params.6.json
+            passTest: true
+  - template: message.UpdateStreamControlEvent.yaml
+    cases:
+      - features: ['rfc8895']
+        examples:
+          - path: examples/rfc8895.updatestream.control.0.json
+            passTest: true
+          - path: examples/rfc8895.updatestream.control.1.json
+            passTest: true
+          - path: examples/rfc8895.updatestream.control.2.json
+            passTest: true
+          - path: examples/rfc8895.updatestream.control.3.json
+            passTest: true
+          - path: examples/rfc8895.updatestream.control.4.json
+            passTest: true

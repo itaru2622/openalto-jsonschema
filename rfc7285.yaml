@@ -180,6 +180,8 @@ definitions:
         properties:
           media-type:
             const: "application/alto-endpointprop+json"
+          accepts:
+            const: "application/alto-endpointpropparams+json"
       then:
         properties:
           capabilities:
@@ -192,6 +194,8 @@ definitions:
         properties:
           media-type:
             const: "application/alto-endpointcost+json"
+          accepts:
+            const: "application/alto-endpointcostparams+json"
       then:
         properties:
           capabilities:
@@ -210,14 +214,37 @@ definitions:
     allOf:
     - $ref: "#/definitions/ResponseEntityBase"
     - properties:
+        meta:
+          allOf:
+          - $ref: "#/definitions/ResponseMeta"
+          - properties:
+              cost-types:
+                $ref: "#/definitions/IRDMetaCostTypes"
+              default-alto-network-map:
+                $ref: "#/definitions/ResourceID"
         resources:
           $ref: "#/definitions/IRDResourceEntries"
       required:
       - resources
+  ServiceResponseMeta:
+    allOf:
+    - $ref: "#/definitions/ResponseMeta"
+    - properties:
+        vtag:
+          $ref: "#/definitions/VersionTag"
+        dependent-vtags:
+          type: array
+          items:
+            $ref: "#/definitions/VersionTag"
   InfoResourceNetworkMap:
     allOf:
     - $ref: "#/definitions/ResponseEntityBase"
     - properties:
+        meta:
+          allOf:
+          - $ref: "#/definitions/ServiceResponseMeta"
+          - required:
+            - vtag
         network-map:
           $ref: "#/definitions/NetworkMapData"
       required:
@@ -244,9 +271,22 @@ definitions:
     allOf:
     - $ref: "#/definitions/ResponseEntityBase"
     - properties:
+        meta:
+          allOf:
+          - $ref: "#/definitions/ServiceResponseMeta"
+          - properties:
+              dependent-vtags:
+                minItems: 1
+                maxItems: 1
+              cost-type:
+                $ref: "#/definitions/CostType"
+            required:
+            - dependent-vtags
+            - cost-type
         cost-map:
           $ref: "#/definitions/CostMapData"
       required:
+      - meta
       - cost-map
   CostMapData:
     type: object
@@ -356,6 +396,8 @@ definitions:
     allOf:
     - $ref: "#/definitions/ResponseEntityBase"
     - properties:
+        meta:
+          $ref: "#/definitions/ServiceResponseMeta"
         endpoint-properties:
           $ref: "#/definitions/EndpointPropertyMapData"
       required:
@@ -363,7 +405,9 @@ definitions:
   EndpointPropertyMapData:
     type: object
     patternProperties:
-      "(^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))(\\.|$){4})|(^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$)":
+      "^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\.|$)){4}":
+        $ref: "#/definitions/EndpointProps"
+      "^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$":
         $ref: "#/definitions/EndpointProps"
     additionalProperties: false
   EndpointProps:
@@ -410,20 +454,40 @@ definitions:
     allOf:
     - $ref: "#/definitions/ResponseEntityBase"
     - properties:
+        meta:
+          allOf:
+          - $ref: "#/definitions/ServiceResponseMeta"
+          - properties:
+              cost-type:
+                $ref: "#/definitions/CostType"
+            required:
+            - cost-type
         endpoint-cost-map:
           $ref: "#/definitions/EndpointCostMapData"
       required:
+      - meta
       - endpoint-cost-map
   EndpointCostMapData:
     type: object
     patternProperties:
-      "(^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))(\\.|$){4})|(^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$)":
+      "^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\.|$)){4}":
+        $ref: "#/definitions/EndpointDstCosts"
+      "^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$":
         $ref: "#/definitions/EndpointDstCosts"
     additionalProperties: false
   EndpointDstCosts:
     type: object
     patternProperties:
-      "(^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))(\\.|$){4})|(^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$)":
+      "^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\.|$)){4}":
+        anyOf:
+        - type: string
+        - type: number
+        - type: array
+        - type: boolean
+        - type: "null"
+        - type: object
+          additionalProperties: true
+      "^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$":
         anyOf:
         - type: string
         - type: number

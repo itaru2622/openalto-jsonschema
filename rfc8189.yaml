@@ -7,6 +7,41 @@ oneOf:
 - $ref: "#/definitions/ReqFilteredCostMap"
 - $ref: "#/definitions/ReqEndpointCostMap"
 definitions:
+  InfoResourceDirectory:
+    allOf:
+    - $ref: !Format "{site}/rfc7285.json#/definitions/InfoResourceDirectory"
+    - properties:
+        resources:
+          $ref: "#/definitions/IRDResourceEntries"
+  IRDResourceEntries:
+    allOf:
+    - $ref: !Format "{site}/rfc7285.json#/definitions/IRDResourceEntries"
+    - patternProperties:
+        "^[0-9a-zA-Z-:@_.]{1,64}$":
+          $ref: "#/definitions/IRDResourceEntry"
+  IRDResourceEntry:
+    allOf:
+    - $ref: !Format "{site}/rfc7285.json#/definitions/IRDResourceEntry"
+    - if:
+        properties:
+          media-type:
+            const: "application/alto-costmap+json"
+          accepts:
+            const: "application/alto-costmapfilter+json"
+      then:
+        properties:
+          capabilities:
+            $ref: "#/definitions/FilteredCostMapCapabilities"
+    - if:
+        properties:
+          media-type:
+            const: "application/alto-endpointcost+json"
+          accepts:
+            const: "application/alto-endpointcostparams+json"
+      then:
+        properties:
+          capabilities:
+            $ref: "#/definitions/FilteredCostMapCapabilities"
   FilteredCostMapCapabilities:
     allOf:
     - $ref: !Format "{site}/rfc7285.json#/definitions/FilteredCostMapCapabilities"
@@ -19,46 +54,118 @@ definitions:
             type: string
           minItems: 1
   ReqFilteredCostMap:
+    type: object
+    properties:
+      cost-type:
+        $ref: !Format "{site}/rfc7285.json#/definitions/CostType"
+      multi-cost-types:
+        type: array
+        items:
+          $ref: !Format "{site}/rfc7285.json#/definitions/CostType"
+        minItems: 1
+      testable-cost-types:
+        type: array
+        items:
+          $ref: !Format "{site}/rfc7285.json#/definitions/CostType"
+        minItems: 1
+      constraints:
+        type: array
+        items:
+          type: string
+      or-constraints:
+        type: array
+        items:
+          type: array
+          items:
+            type: string
+          minItems: 1
+        minItems: 1
+      pids:
+        $ref: !Format "{site}/rfc7285.json#/definitions/PIDFilter"
+    additionalProperties: true
+    oneOf:
+    - required:
+      - cost-type
+    - required:
+      - multi-cost-types
+  InfoResourceCostMap:
     allOf:
-    - $ref: !Format "{site}/rfc7285.json#/definitions/ReqFilteredCostMap"
+    - $ref: !Format "{site}/rfc7285.json#/definitions/ResponseEntityBase"
     - properties:
-        multi-cost-types:
-          type: array
-          items:
-            $ref: !Format "{site}/rfc7285.json#/definitions/CostType"
-          minItems: 1
-        testable-cost-types:
-          type: array
-          items:
-            $ref: !Format "{site}/rfc7285.json#/definitions/CostType"
-          minItems: 1
-        or-constraints:
-          type: array
-          items:
-            type: array
-            items:
-              type: string
-            minItems: 1
-          minItems: 1
+        meta:
+          allOf:
+          - $ref: !Format "{site}/rfc7285.json#/definitions/ServiceResponseMeta"
+          - properties:
+              dependent-vtags:
+                minItems: 1
+                maxItems: 1
+              multi-cost-types:
+                type: array
+                items:
+                  $ref: !Format "{site}/rfc7285.json#/definitions/CostType"
+                minItems: 1
+            required:
+            - dependent-vtags
+            - multi-cost-types
+        cost-map:
+          $ref: !Format "{site}/rfc7285.json#/definitions/CostMapData"
+      required:
+      - meta
+      - cost-map
   ReqEndpointCostMap:
+    type: object
+    properties:
+      cost-type:
+        $ref: !Format "{site}/rfc7285.json#/definitions/CostType"
+      multi-cost-types:
+        type: array
+        items:
+          $ref: !Format "{site}/rfc7285.json#/definitions/CostType"
+        minItems: 1
+      constraints:
+        type: array
+        items:
+          type: string
+      testable-cost-types:
+        type: array
+        items:
+          $ref: !Format "{site}/rfc7285.json#/definitions/CostType"
+        minItems: 1
+      or-constraints:
+        type: array
+        items:
+          type: array
+          items:
+            type: string
+          minItems: 1
+        minItems: 1
+      endpoints:
+        $ref: !Format "{site}/rfc7285.json#/definitions/EndpointFilter"
+    additionalProperties: true
+    oneOf:
+    - required:
+      - cost-type
+      - endpoints
+    - required:
+      - multi-cost-types
+      - endpoints
+  InfoResourceEndpointCostMap:
     allOf:
-    - $ref: !Format "{site}/rfc7285.json#/definitions/ReqEndpointCostMap"
+    - $ref: !Format "{site}/rfc7285.json#/definitions/ResponseEntityBase"
     - properties:
-        multi-cost-types:
-          type: array
-          items:
-            $ref: !Format "{site}/rfc7285.json#/definitions/CostType"
-          minItems: 1
-        testable-cost-types:
-          type: array
-          items:
-            $ref: !Format "{site}/rfc7285.json#/definitions/CostType"
-          minItems: 1
-        or-constraints:
-          type: array
-          items:
-            type: array
-            items:
-              type: string
-            minItems: 1
-          minItems: 1
+        meta:
+          allOf:
+          - $ref: !Format "{site}/rfc7285.json#/definitions/ServiceResponseMeta"
+          - properties:
+              multi-cost-types:
+                type: array
+                items:
+                  $ref: !Format "{site}/rfc7285.json#/definitions/CostType"
+                minItems: 1
+            required:
+            - multi-cost-types
+        endpoint-cost-map:
+          $ref: !Format "{site}/rfc7285.json#/definitions/EndpointCostMapData"
+      required:
+      - meta
+      - endpoint-cost-map

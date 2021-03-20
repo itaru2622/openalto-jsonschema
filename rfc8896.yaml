@@ -4,6 +4,47 @@ site: .
 $schema: "http://json-schema.org/draft-07/schema#"
 $id: !Format "{site}/rfc8896.json"
 definitions:
+  InfoResourceDirectory:
+    allOf:
+    - $ref: !Format "{site}/rfc7285.json#/definitions/InfoResourceDirectory"
+    - properties:
+        resources:
+          $ref: "#/definitions/IRDResourceEntries"
+  IRDResourceEntries:
+    allOf:
+    - $ref: !Format "{site}/rfc7285.json#/definitions/IRDResourceEntries"
+    - patternProperties:
+        "^[0-9a-zA-Z-:@_.]{1,64}$":
+          $ref: "#/definitions/IRDResourceEntry"
+  IRDResourceEntry:
+    allOf:
+    - $ref: !Format "{site}/rfc7285.json#/definitions/IRDResourceEntry"
+    - if:
+        properties:
+          media-type:
+            const: "application/alto-costmap+json"
+          accepts:
+            const: "application/alto-costmapfilter+json"
+      then:
+        properties:
+          capabilities:
+            $ref: "#/definitions/FilteredCostMapCapabilities"
+    - if:
+        properties:
+          media-type:
+            const: "application/alto-endpointcost+json"
+          accepts:
+            const: "application/alto-endpointcostparams+json"
+      then:
+        properties:
+          capabilities:
+            $ref: "#/definitions/FilteredCostMapCapabilities"
+  FilteredCostMapCapabilities:
+    allOf:
+    - $ref: !Format "{site}/rfc7285.json#/definitions/FilteredCostMapCapabilities"
+    - properties:
+        calendar-attributes:
+          $ref: "#/definitions/CalendarAttributes"
   CalendarAttributes:
     type: object
     properties:
@@ -44,19 +85,47 @@ definitions:
     additionalProperties: true
   ReqFilteredCostMap:
     allOf:
-    - $ref: !Format "{site}/rfc7285.json#/definitions/ReqFilteredCostMap"
+    - anyOf:
+      - $ref: !Format "{site}/rfc7285.json#/definitions/ReqFilteredCostMap"
+      - $ref: !Format "{site}/rfc8189.json#/definitions/ReqFilteredCostMap"
     - properties:
         calendared:
           type: array
           items:
             type: boolean
           minItems: 1
+  InfoResourceCostMap:
+    allOf:
+    - anyOf:
+      - $ref: !Format "{site}/rfc7285.json#/definitions/InfoResourceCostMap"
+      - $ref: !Format "{site}/rfc8189.json#/definitions/InfoResourceCostMap"
+    - properties:
+        meta:
+          calendar-response-attributes:
+            type: array
+            items:
+              $ref: "#/definitions/CalendarResponseAttributes"
+            minItems: 1
   ReqEndpointCostMap:
     allOf:
-    - $ref: !Format "{site}/rfc7285.json#/definitions/ReqEndpointCostMap"
+    - anyOf:
+      - $ref: !Format "{site}/rfc7285.json#/definitions/ReqEndpointCostMap"
+      - $ref: !Format "{site}/rfc8189.json#/definitions/ReqEndpointCostMap"
     - properties:
         calendared:
           type: array
           items:
             type: boolean
           minItems: 1
+  InfoResourceEndpointCostMap:
+    allOf:
+    - anyOf:
+      - $ref: !Format "{site}/rfc7285.json#/definitions/InfoResourceEndpointCostMap"
+      - $ref: !Format "{site}/rfc8189.json#/definitions/InfoResourceEndpointCostMap"
+    - properties:
+        meta:
+          calendar-response-attributes:
+            type: array
+            items:
+              $ref: "#/definitions/CalendarResponseAttributes"
+            minItems: 1
