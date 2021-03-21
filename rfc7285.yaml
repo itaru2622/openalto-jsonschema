@@ -90,7 +90,7 @@ definitions:
           as: cost-metric
           test: !Not,Exists cost-metric.private
         as: cost-metric
-        template: cost-metric.id
+        template: !Lookup cost-metric.id
   CostType:
     type: object
     properties:

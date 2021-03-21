@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="referrer" content="no-referrer" />
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="icon" type="image/png" href="https://openalto.github.io/img/icon.png" />
+  <link rel="apple-touch-icon" type="image/png" href="https://openalto.github.io/img/icon.png" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+  <title>ALTO Messages JSON Schema Validator</title>
+</head>
+<body>
+  <div class="container">
+
+  <h2 class="display-2">ALTO Messages JSON Schema Validator</h2>
+
+  <label for="message-schema" class="form-label">JSON Schema:</label>
+  <div class="input-group mb-3">
+    <span class="input-group-text">https://openalto.github.io/alto-jsonschema/message.</span>
+    <select class="form-select" id="message-schema" aria-label="message-schema">
+      <option selected>Select JSON Schema</option>
+      <option value="InfoResourceDirectory">InfoResourceDirectory</option>
+      <option value="InfoResourceNetworkMap">InfoResourceNetworkMap</option>
+      <option value="InfoResourceCostMap">InfoResourceCostMap</option>
+      <option value="ReqFilteredNetworkMap">ReqFilteredNetworkMap</option>
+      <option value="ReqFilteredCostMap">ReqFilteredCostMap</option>
+      <option value="ReqEndpointProp">ReqEndpointProp</option>
+      <option value="InfoResourceEndpointProperties">InfoResourceEndpointProperties</option>
+      <option value="ReqEndpointCostMap">ReqEndpointCostMap</option>
+      <option value="InfoResourceEndpointCostMap">InfoResourceEndpointCostMap</option>
+      <option value="UpdateStreamReq">UpdateStreamReq</option>
+      <option value="UpdateStreamControlEvent">UpdateStreamControlEvent</option>
+    </select>
+    <select class="form-select" id="schema-features" aria-label="schema-features">
+      <option selected>Select Supported Standards</option>
+    </select>
+    <span class="input-group-text">.json</span>
+  </div>
+
+  <label for="message-instance-uri" class="form-label">ALTO Message to be Validated:</label>
+  <div class="input-group mb-3">
+    <input type="text" class="form-control" placeholder="link to an ALTO message JSON file" id="message-instance-uri" />
+  </div>
+
+  <div class="input-group mb-3">
+    <span class="input-group-text">ALTO Message</span>
+    <textarea class="form-control" id="message-instance" aria-label="ALTO Message"></textarea>
+  </div>
+
+  <div class="input-group mb-3">
+    <button type="button" class="btn btn-outline-primary" id="validate" disabled>Validate</button>
+  </div>
+
+  <label for="validation-result" class="form-label">ALTO Message to be Validated:</label>
+  <div class="input-group mb-3">
+    <div class="form-control alert" role="alert" id="validation-result"></div>
+  </div>
+
+  </div><!-- End of div.container -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ajv/7.2.3/ajv7.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script>
+  ;(function() {
+    const Ajv = window.ajv7.default;
+    const ajv = new Ajv({strict: 'log'});
+    $.getJSON('rfc7285.json')
+      .done(function(json){
+        ajv.addSchema(json);
+        $.getJSON('rfc8189.json')
+          .done(function(json){
+            ajv.addSchema(json);
+            $.getJSON('rfc8895.json')
+              .done(function(json){
+                ajv.addSchema(json);
+                $.getJSON('rfc8896.json')
+                  .done(function(json){
+                    ajv.addSchema(json);
+                  });
+              });
+          });
+      });
+
+    var all_features = {
+      InfoResourceDirectory: ['.rfc7285', '.rfc8189', '.rfc7285.rfc8895', '.rfc7285.rfc8896', '.rfc8189.rfc8895', '.rfc8189.rfc8896', '.rfc7285.rfc8895.rfc8896', '.rfc8189.rfc8895.rfc8896'],
+      InfoResourceNetworkMap: ['.rfc7285'],
+      InfoResourceCostMap: ['.rfc7285', '.rfc8189', '.rfc7285.rfc8896', '.rfc8189.rfc8896'],
+      ReqFilteredNetworkMap: ['.rfc7285'],
+      ReqFilteredCostMap: ['.rfc7285', '.rfc8189', '.rfc7285.rfc8896', '.rfc8189.rfc8896'],
+      ReqEndpointProp: ['.rfc7285'],
+      InfoResourceEndpointProperties: ['.rfc7285'],
+      ReqEndpointCostMap: ['.rfc7285', '.rfc8189', '.rfc7285.rfc8896', '.rfc8189.rfc8896'],
+      InfoResourceEndpointCostMap: ['.rfc7285', '.rfc8189', '.rfc7285.rfc8896', '.rfc8189.rfc8896'],
+      UpdateStreamReq: ['.rfc8895'],
+      UpdateStreamControlEvent: ['.rfc8895']
+    };
+
+    $('#message-schema').change(function() {
+      var features = [];
+      if ($(this).val()) {
+        features = all_features[$(this).val()]
+      }
+      $('#schema-features').empty();
+      $('#schema-features').append('<option selected>Select Supported Standards</option>')
+      features.forEach(f => $('#schema-features').append(`<option value="${f}">${f}</option>`));
+      test_button();
+    });
+
+    $('#schema-features').change(function(){
+      test_button();
+    });
+
+    $('#message-instance-uri').change(function(){
+      if ($(this).val()) {
+        $('#message-instance').prop('readonly', true);
+      } else {
+        $('#message-instance').prop('readonly', false);
+      }
+      test_button();
+    });
+
+    $('#message-instance').change(function(){
+      test_button();
+    });
+
+    var test_button = function() {
+      if ($('#message-schema').val() && $('#schema-features').val() && ($('#message-instance-uri').val() || $('#message-instance').val())) {
+        $('#validate').prop('disabled', false);
+      } else {
+        $('#validate').prop('disabled', true);
+      }
+    };
+
+    $('#validate').click(function() {
+      var schema = 'message.' + $('#message-schema').val() + $('#schema-features').val() + '.json';
+      $.getJSON(schema)
+        .done(function(json) {
+          var validate = ajv.getSchema(json.$id);
+          if (!validate) {
+            validate = ajv.compile(json);
+          }
+          var instance = $('#message-instance-uri').val();
+          if (instance) {
+            $.getJSON(instance)
+              .done(function(msg) {
+                var valid = validate(msg);
+                if (!valid) {
+                  $('#validation-result').html(`<pre class="alert-danger">${ajv.errorsText(validate.errors)}</pre>`);
+                } else {
+                  $('#validation-result').html(`<pre class="alert-success">Pass</pre>`);
+                }
+              })
+              .fail(function(jqxhr, textStatus, error) {
+                var err = textStatus + ', ' + error;
+                $('#validation-result').html(`<pre class="alert-danger">Failed to retrieve ALTO message: ${err}</pre>`);
+              });
+          } else {
+            instance = $('#message-instance').val();
+            try {
+              var msg = JSON.parse(instance);
+              var valid = validate(msg);
+              if (!valid) {
+                $('#validation-result').html(`<pre class="alert-danger">${ajv.errorsText(validate.errors)}</pre>`);
+              } else {
+                $('#validation-result').html(`<pre class="alert-success">Pass</pre>`);
+              }
+            } catch (err) {
+              $('#validation-result').html(`<pre class="alert-danger">Invalid JSON Object: ${err}</pre>`);
+            }
+          }
+        })
+        .fail(function(jqxhr, textStatus, error) {
+          var err = textStatus + ', ' + error;
+          $('#validation-result').html(`<pre class="alert-danger">Failed to retrieve schema: ${err}</pre>`);
+        });
+
+    });
+  })()
+  </script>
+</body>
+</html>

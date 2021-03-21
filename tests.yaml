@@ -30,6 +30,7 @@ messages:
             passTest: true
           - path: examples/rfc7285.costmap.1.json
             passTest: true
+      - features: ['rfc8189']
       - features: ['rfc7285', 'rfc8896']
         examples:
           - path: examples/rfc8896.costmap.0.json
@@ -98,6 +99,7 @@ messages:
         examples:
           - path: examples/rfc7285.endpointcost.0.json
             passTest: true
+      - features: ['rfc8189']
       - features: ['rfc7285', 'rfc8896']
         examples:
           - path: examples/rfc8896.endpointcost.0.json
