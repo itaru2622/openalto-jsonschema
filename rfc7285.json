@@ -133,15 +133,15 @@
         },
         {
           "enum": [
-            "cost-metric.id",
-            "cost-metric.id",
-            "cost-metric.id",
-            "cost-metric.id",
-            "cost-metric.id",
-            "cost-metric.id",
-            "cost-metric.id",
-            "cost-metric.id",
-            "cost-metric.id"
+            "routingcost",
+            "delay-ow",
+            "delay-rt",
+            "delay-variation",
+            "hopcount",
+            "lossrate",
+            "tput",
+            "bw-residual",
+            "bw-maxres"
           ]
         }
       ]
