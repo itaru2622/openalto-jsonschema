@@ -1,2 +1,2 @@
 # URI prefix for generated JSON schemas
-site: "https://openalto.github.io/alto-jsonschema"
+site: "https://raw.githubusercontent.com/openalto/alto-jsonschema/gh-pages"
