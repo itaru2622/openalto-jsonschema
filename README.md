@@ -11,6 +11,11 @@ Requirements:
 - [emrichen](https://github.com/con2/emrichen)
 - [jsonschema](https://github.com/Julian/jsonschema)
 
+additional requirements to generate OpenAPI Schema from JSON Schema:
+- nodejs v10 or later version
+- npm
+- [json-schema-to-openapi-schema](https://github.com/openapi-contrib/json-schema-to-openapi-schema)
+
 Install python dependencies (emrichen, jsonschema):
 
 ~~~

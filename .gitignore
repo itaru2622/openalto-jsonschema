@@ -152,4 +152,8 @@ Thumbs.db #thumbnail cache on Windows
 # temp files
 tmp/
 
+# nodejs modules and related files for json-schema-to-openapi-schema
+node_modules/
+package-lock.json
+package.json
 # End of https://www.toptal.com/developers/gitignore/api/python
