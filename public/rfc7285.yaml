@@ -1,0 +1,492 @@
+$schema: http://json-schema.org/draft-07/schema#
+$id: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml
+oneOf:
+  - $ref: '#/definitions/InfoResourceDirectory'
+  - $ref: '#/definitions/InfoResourceNetworkMap'
+  - $ref: '#/definitions/InfoResourceCostMap'
+  - $ref: '#/definitions/ReqFilteredNetworkMap'
+  - $ref: '#/definitions/ReqFilteredCostMap'
+  - $ref: '#/definitions/ReqEndpointProp'
+  - $ref: '#/definitions/InfoResourceEndpointProperties'
+  - $ref: '#/definitions/ReqEndpointCostMap'
+  - $ref: '#/definitions/InfoResourceEndpointCostMap'
+definitions:
+  ResponseMeta:
+    type: object
+    additionalProperties: true
+  ResponseEntityBase:
+    type: object
+    properties:
+      meta:
+        $ref: '#/definitions/ResponseMeta'
+    additionalProperties: true
+  MediaType:
+    type: string
+    pattern: "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\\
+      /([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"\
+      (?:[^\"\\\\]|\\.)*\"))*)$"
+  URI:
+    type: string
+    pattern: ^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?$
+  PIDName:
+    type: string
+    pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+  ResourceID:
+    $ref: '#/definitions/PIDName'
+  VersionTag:
+    type: object
+    properties:
+      resource-id:
+        $ref: '#/definitions/ResourceID'
+      tag:
+        type: string
+        pattern: ^[!-~]+$
+    required:
+      - resource-id
+      - tag
+  TypedEndpointAddr:
+    type: string
+    oneOf:
+      - pattern: ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}
+      - pattern: ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))
+  AddressType:
+    type: string
+    enum:
+      - ipv4
+      - ipv6
+  IPv4EndpointPrefix:
+    type: string
+    pattern: (([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|(\/(([12]?[0-9])|(3[0-2]))$))){4}
+  IPv6EndpointPrefix:
+    type: string
+    pattern: ((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))\/(([1-5]?[0-9])|(6[0-4]))
+  EndpointAddrGroup:
+    type: object
+    properties:
+      ipv4:
+        type: array
+        items:
+          $ref: '#/definitions/IPv4EndpointPrefix'
+      ipv6:
+        type: array
+        items:
+          $ref: '#/definitions/IPv6EndpointPrefix'
+  CostMode:
+    type: string
+    enum:
+      - numerical
+      - ordinal
+  CostMetric:
+    anyOf:
+      - type: string
+        pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+      - enum:
+          - routingcost
+          - delay-ow
+          - delay-rt
+          - delay-variation
+          - hopcount
+          - lossrate
+          - tput
+          - bw-residual
+          - bw-maxres
+  CostType:
+    type: object
+    properties:
+      cost-mode:
+        $ref: '#/definitions/CostMode'
+      cost-metric:
+        $ref: '#/definitions/CostMetric'
+    required:
+      - cost-mode
+      - cost-metric
+  ResourceSpecificEndpointProperty:
+    type: string
+    anyOf:
+      - pattern: ^[0-9a-zA-Z-:@_.]{1,64}\.pid$
+  GlobalEndpointProperty:
+    type: string
+    pattern: ^[0-9a-zA-Z-:_]{1,32}$
+  EndpointPropertyType:
+    oneOf:
+      - $ref: '#/definitions/ResourceSpecificEndpointProperty'
+      - $ref: '#/definitions/GlobalEndpointProperty'
+  IRDMetaCostTypes:
+    type: object
+    patternProperties:
+      ^.*$:
+        $ref: '#/definitions/CostType'
+    additionalProperties: false
+  Capabilities:
+    type: object
+    additionalProperties: true
+  IRDResourceEntry:
+    type: object
+    properties:
+      uri:
+        $ref: '#/definitions/URI'
+      media-type:
+        $ref: '#/definitions/MediaType'
+      accepts:
+        allOf:
+          - $ref: '#/definitions/MediaType'
+          - default: null
+      capabilities:
+        $ref: '#/definitions/Capabilities'
+      uses:
+        type: array
+        items:
+          $ref: '#/definitions/ResourceID'
+    required:
+      - uri
+      - media-type
+    allOf:
+      - if:
+          properties:
+            media-type:
+              const: application/alto-costmap+json
+            accepts:
+              const: null
+        then:
+          properties:
+            capabilities:
+              $ref: '#/definitions/CostMapCapabilities'
+          required:
+            - uri
+            - media-type
+            - capabilities
+      - if:
+          properties:
+            media-type:
+              const: application/alto-costmap+json
+            accepts:
+              const: application/alto-costmapfilter+json
+        then:
+          properties:
+            capabilities:
+              $ref: '#/definitions/FilteredCostMapCapabilities'
+          required:
+            - uri
+            - media-type
+            - capabilities
+      - if:
+          properties:
+            media-type:
+              const: application/alto-endpointprop+json
+            accepts:
+              const: application/alto-endpointpropparams+json
+        then:
+          properties:
+            capabilities:
+              $ref: '#/definitions/EndpointPropertyCapabilities'
+          required:
+            - uri
+            - media-type
+            - capabilities
+      - if:
+          properties:
+            media-type:
+              const: application/alto-endpointcost+json
+            accepts:
+              const: application/alto-endpointcostparams+json
+        then:
+          properties:
+            capabilities:
+              $ref: '#/definitions/FilteredCostMapCapabilities'
+          required:
+            - uri
+            - media-type
+            - capabilities
+  IRDResourceEntries:
+    type: object
+    patternProperties:
+      ^[0-9a-zA-Z-:@_.]{1,64}$:
+        $ref: '#/definitions/IRDResourceEntry'
+    additionalProperties: false
+  InfoResourceDirectory:
+    allOf:
+      - $ref: '#/definitions/ResponseEntityBase'
+      - properties:
+          meta:
+            allOf:
+              - $ref: '#/definitions/ResponseMeta'
+              - properties:
+                  cost-types:
+                    $ref: '#/definitions/IRDMetaCostTypes'
+                  default-alto-network-map:
+                    $ref: '#/definitions/ResourceID'
+          resources:
+            $ref: '#/definitions/IRDResourceEntries'
+        required:
+          - resources
+  ServiceResponseMeta:
+    allOf:
+      - $ref: '#/definitions/ResponseMeta'
+      - properties:
+          vtag:
+            $ref: '#/definitions/VersionTag'
+          dependent-vtags:
+            type: array
+            items:
+              $ref: '#/definitions/VersionTag'
+  InfoResourceNetworkMap:
+    allOf:
+      - $ref: '#/definitions/ResponseEntityBase'
+      - properties:
+          meta:
+            allOf:
+              - $ref: '#/definitions/ServiceResponseMeta'
+              - required:
+                  - vtag
+          network-map:
+            $ref: '#/definitions/NetworkMapData'
+        required:
+          - network-map
+  NetworkMapData:
+    type: object
+    patternProperties:
+      ^[0-9a-zA-Z-:@_.]{1,64}$:
+        $ref: '#/definitions/EndpointAddrGroup'
+    additionalProperties: false
+  CostMapCapabilities:
+    type: object
+    properties:
+      cost-type-names:
+        type: array
+        items:
+          type: string
+        minItems: 1
+        maxItems: 1
+    required:
+      - cost-type-names
+    additionalProperties: true
+  InfoResourceCostMap:
+    allOf:
+      - $ref: '#/definitions/ResponseEntityBase'
+      - properties:
+          meta:
+            allOf:
+              - $ref: '#/definitions/ServiceResponseMeta'
+              - properties:
+                  dependent-vtags:
+                    minItems: 1
+                    maxItems: 1
+                  cost-type:
+                    $ref: '#/definitions/CostType'
+                required:
+                  - dependent-vtags
+                  - cost-type
+          cost-map:
+            $ref: '#/definitions/CostMapData'
+        required:
+          - meta
+          - cost-map
+  CostMapData:
+    type: object
+    patternProperties:
+      ^[0-9a-zA-Z-:@_.]{1,64}$:
+        $ref: '#/definitions/DstCosts'
+    additionalProperties: false
+  DstCosts:
+    type: object
+    patternProperties:
+      ^[0-9a-zA-Z-:@_.]{1,64}$:
+        anyOf:
+          - type: string
+          - type: number
+          - type: array
+          - type: boolean
+          - type: 'null'
+          - type: object
+            additionalProperties: true
+    additionalProperties: false
+  ReqFilteredNetworkMap:
+    type: object
+    properties:
+      pids:
+        type: array
+        items:
+          $ref: '#/definitions/PIDName'
+      address-types:
+        type: array
+        items:
+          $ref: '#/definitions/AddressType'
+    required:
+      - pids
+    additionalProperties: true
+  ReqFilteredCostMap:
+    type: object
+    properties:
+      cost-type:
+        $ref: '#/definitions/CostType'
+      constraints:
+        type: array
+        items:
+          type: string
+      pids:
+        $ref: '#/definitions/PIDFilter'
+    required:
+      - cost-type
+    additionalProperties: true
+  PIDFilter:
+    type: object
+    properties:
+      srcs:
+        type: array
+        items:
+          $ref: '#/definitions/PIDName'
+      dsts:
+        type: array
+        items:
+          $ref: '#/definitions/PIDName'
+    required:
+      - srcs
+      - dsts
+    additionalProperties: true
+  FilteredCostMapCapabilities:
+    type: object
+    properties:
+      cost-type-names:
+        type: array
+        items:
+          type: string
+        minItems: 1
+      cost-constraints:
+        type: boolean
+        default: false
+    require:
+      - cost-type-names
+    additionalProperties: true
+  ReqEndpointProp:
+    type: object
+    properties:
+      properties:
+        type: array
+        items:
+          $ref: '#/definitions/EndpointPropertyType'
+        minItems: 1
+      endpoints:
+        type: array
+        items:
+          $ref: '#/definitions/TypedEndpointAddr'
+        minItems: 1
+    required:
+      - properties
+      - endpoints
+    additionalProperties: true
+  EndpointPropertyCapabilities:
+    type: object
+    properties:
+      prop-types:
+        type: array
+        items:
+          $ref: '#/definitions/EndpointPropertyType'
+        minItems: 1
+    required:
+      - prop-types
+    additionalProperties: true
+  InfoResourceEndpointProperties:
+    allOf:
+      - $ref: '#/definitions/ResponseEntityBase'
+      - properties:
+          meta:
+            $ref: '#/definitions/ServiceResponseMeta'
+          endpoint-properties:
+            $ref: '#/definitions/EndpointPropertyMapData'
+        required:
+          - endpoint-properties
+  EndpointPropertyMapData:
+    type: object
+    patternProperties:
+      ^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}:
+        $ref: '#/definitions/EndpointProps'
+      ? ^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$
+      : $ref: '#/definitions/EndpointProps'
+    additionalProperties: false
+  EndpointProps:
+    type: object
+    patternProperties:
+      (^[0-9a-zA-Z-:@_.]{1,64}\.pid$)|(^[0-9a-zA-Z-:_]{1,32}$):
+        anyOf:
+          - type: string
+          - type: number
+          - type: array
+          - type: boolean
+          - type: 'null'
+          - type: object
+            additionalProperties: true
+    additionalProperties: false
+  ReqEndpointCostMap:
+    type: object
+    properties:
+      cost-type:
+        $ref: '#/definitions/CostType'
+      constraints:
+        type: array
+        items:
+          type: string
+      endpoints:
+        $ref: '#/definitions/EndpointFilter'
+    required:
+      - cost-type
+      - endpoints
+    additionalProperties: true
+  EndpointFilter:
+    type: object
+    properties:
+      srcs:
+        type: array
+        items:
+          $ref: '#/definitions/TypedEndpointAddr'
+      dsts:
+        type: array
+        items:
+          $ref: '#/definitions/TypedEndpointAddr'
+    additionalProperties: true
+  InfoResourceEndpointCostMap:
+    allOf:
+      - $ref: '#/definitions/ResponseEntityBase'
+      - properties:
+          meta:
+            allOf:
+              - $ref: '#/definitions/ServiceResponseMeta'
+              - properties:
+                  cost-type:
+                    $ref: '#/definitions/CostType'
+                required:
+                  - cost-type
+          endpoint-cost-map:
+            $ref: '#/definitions/EndpointCostMapData'
+        required:
+          - meta
+          - endpoint-cost-map
+  EndpointCostMapData:
+    type: object
+    patternProperties:
+      ^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}:
+        $ref: '#/definitions/EndpointDstCosts'
+      ? ^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$
+      : $ref: '#/definitions/EndpointDstCosts'
+    additionalProperties: false
+  EndpointDstCosts:
+    type: object
+    patternProperties:
+      ^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}:
+        anyOf:
+          - type: string
+          - type: number
+          - type: array
+          - type: boolean
+          - type: 'null'
+          - type: object
+            additionalProperties: true
+      ? ^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$
+      : anyOf:
+          - type: string
+          - type: number
+          - type: array
+          - type: boolean
+          - type: 'null'
+          - type: object
+            additionalProperties: true
+    additionalProperties: false

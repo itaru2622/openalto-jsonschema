@@ -1,0 +1,4 @@
+$schema: http://json-schema.org/draft-07/schema#
+$id: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/message.InfoResourceEndpointProperties.rfc7285.yaml
+allOf:
+  - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/InfoResourceEndpointProperties

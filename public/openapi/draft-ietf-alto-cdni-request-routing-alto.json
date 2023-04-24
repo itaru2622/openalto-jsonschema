@@ -1,0 +1,319 @@
+{
+  "definitions": {
+    "InfoResourceCDNIAdvertisement": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "meta": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        },
+        {
+          "properties": {
+            "cdni-advertisement": {
+              "type": "object",
+              "properties": {
+                "capabilities-with-footprints": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "capability-type": {
+                        "type": "string"
+                      },
+                      "capability-value": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "array",
+                            "items": {}
+                          },
+                          {
+                            "type": "boolean"
+                          },
+                          {
+                            "nullable": true
+                          },
+                          {
+                            "type": "object",
+                            "additionalProperties": true
+                          }
+                        ]
+                      },
+                      "footprints": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "footprint-type": {
+                              "type": "string"
+                            },
+                            "footprint-value": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              },
+                              "minItems": 1
+                            }
+                          },
+                          "additionalProperties": true
+                        }
+                      }
+                    },
+                    "required": [
+                      "capability-type",
+                      "capability-value",
+                      "footprints"
+                    ],
+                    "additionalProperties": true
+                  }
+                }
+              },
+              "required": [
+                "capabilities-with-footprints"
+              ],
+              "additionalProperties": true
+            }
+          },
+          "required": [
+            "cdni-advertisement"
+          ]
+        }
+      ]
+    },
+    "CDNIAdvertisementData": {
+      "type": "object",
+      "properties": {
+        "capabilities-with-footprints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "capability-type": {
+                "type": "string"
+              },
+              "capability-value": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "array",
+                    "items": {}
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "nullable": true
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                ]
+              },
+              "footprints": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "footprint-type": {
+                      "type": "string"
+                    },
+                    "footprint-value": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "minItems": 1
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              }
+            },
+            "required": [
+              "capability-type",
+              "capability-value",
+              "footprints"
+            ],
+            "additionalProperties": true
+          }
+        }
+      },
+      "required": [
+        "capabilities-with-footprints"
+      ],
+      "additionalProperties": true
+    },
+    "BaseAdvertisementObject": {
+      "type": "object",
+      "properties": {
+        "capability-type": {
+          "type": "string"
+        },
+        "capability-value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "array",
+              "items": {}
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "nullable": true
+            },
+            {
+              "type": "object",
+              "additionalProperties": true
+            }
+          ]
+        },
+        "footprints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "footprint-type": {
+                "type": "string"
+              },
+              "footprint-value": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "required": [
+        "capability-type",
+        "capability-value",
+        "footprints"
+      ],
+      "additionalProperties": true
+    },
+    "Footprint": {
+      "type": "object",
+      "properties": {
+        "footprint-type": {
+          "type": "string"
+        },
+        "footprint-value": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "CDNICapability": {
+      "type": "object",
+      "properties": {
+        "capability-type": {
+          "type": "string"
+        },
+        "capability-value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "array",
+              "items": {}
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "nullable": true
+            },
+            {
+              "type": "object",
+              "additionalProperties": true
+            }
+          ]
+        }
+      },
+      "required": [
+        "capability-type",
+        "capability-value"
+      ],
+      "additionalProperties": true
+    },
+    "ReqFilteredCDNIAdvertisement": {
+      "type": "object",
+      "properties": {
+        "cdni-capabilities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "capability-type": {
+                "type": "string"
+              },
+              "capability-value": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "array",
+                    "items": {}
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "nullable": true
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                ]
+              }
+            },
+            "required": [
+              "capability-type",
+              "capability-value"
+            ],
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

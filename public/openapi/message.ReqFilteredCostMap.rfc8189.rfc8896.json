@@ -1,0 +1,455 @@
+{
+  "allOf": [
+    {
+      "type": "object",
+      "properties": {
+        "cost-type": {
+          "type": "object",
+          "properties": {
+            "cost-mode": {
+              "type": "string",
+              "enum": [
+                "numerical",
+                "ordinal"
+              ]
+            },
+            "cost-metric": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[0-9a-zA-Z-:_.]{1,32}$"
+                },
+                {
+                  "enum": [
+                    "routingcost",
+                    "delay-ow",
+                    "delay-rt",
+                    "delay-variation",
+                    "hopcount",
+                    "lossrate",
+                    "tput",
+                    "bw-residual",
+                    "bw-maxres"
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "cost-mode",
+            "cost-metric"
+          ]
+        },
+        "multi-cost-types": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "cost-mode": {
+                "type": "string",
+                "enum": [
+                  "numerical",
+                  "ordinal"
+                ]
+              },
+              "cost-metric": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[0-9a-zA-Z-:_.]{1,32}$"
+                  },
+                  {
+                    "enum": [
+                      "routingcost",
+                      "delay-ow",
+                      "delay-rt",
+                      "delay-variation",
+                      "hopcount",
+                      "lossrate",
+                      "tput",
+                      "bw-residual",
+                      "bw-maxres"
+                    ]
+                  }
+                ]
+              }
+            },
+            "required": [
+              "cost-mode",
+              "cost-metric"
+            ]
+          },
+          "minItems": 1
+        },
+        "testable-cost-types": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "cost-mode": {
+                "type": "string",
+                "enum": [
+                  "numerical",
+                  "ordinal"
+                ]
+              },
+              "cost-metric": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[0-9a-zA-Z-:_.]{1,32}$"
+                  },
+                  {
+                    "enum": [
+                      "routingcost",
+                      "delay-ow",
+                      "delay-rt",
+                      "delay-variation",
+                      "hopcount",
+                      "lossrate",
+                      "tput",
+                      "bw-residual",
+                      "bw-maxres"
+                    ]
+                  }
+                ]
+              }
+            },
+            "required": [
+              "cost-mode",
+              "cost-metric"
+            ]
+          },
+          "minItems": 1
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "or-constraints": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "minItems": 1
+        },
+        "pids": {
+          "type": "object",
+          "properties": {
+            "srcs": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[0-9a-zA-Z-:@_.]{1,64}$"
+              }
+            },
+            "dsts": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[0-9a-zA-Z-:@_.]{1,64}$"
+              }
+            }
+          },
+          "required": [
+            "srcs",
+            "dsts"
+          ],
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true,
+      "oneOf": [
+        {
+          "required": [
+            "cost-type"
+          ]
+        },
+        {
+          "required": [
+            "multi-cost-types"
+          ]
+        }
+      ]
+    },
+    {
+      "allOf": [
+        {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "cost-type": {
+                  "type": "object",
+                  "properties": {
+                    "cost-mode": {
+                      "type": "string",
+                      "enum": [
+                        "numerical",
+                        "ordinal"
+                      ]
+                    },
+                    "cost-metric": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^[0-9a-zA-Z-:_.]{1,32}$"
+                        },
+                        {
+                          "enum": [
+                            "routingcost",
+                            "delay-ow",
+                            "delay-rt",
+                            "delay-variation",
+                            "hopcount",
+                            "lossrate",
+                            "tput",
+                            "bw-residual",
+                            "bw-maxres"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "cost-mode",
+                    "cost-metric"
+                  ]
+                },
+                "constraints": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "pids": {
+                  "type": "object",
+                  "properties": {
+                    "srcs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[0-9a-zA-Z-:@_.]{1,64}$"
+                      }
+                    },
+                    "dsts": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[0-9a-zA-Z-:@_.]{1,64}$"
+                      }
+                    }
+                  },
+                  "required": [
+                    "srcs",
+                    "dsts"
+                  ],
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "cost-type"
+              ],
+              "additionalProperties": true
+            },
+            {
+              "type": "object",
+              "properties": {
+                "cost-type": {
+                  "type": "object",
+                  "properties": {
+                    "cost-mode": {
+                      "type": "string",
+                      "enum": [
+                        "numerical",
+                        "ordinal"
+                      ]
+                    },
+                    "cost-metric": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^[0-9a-zA-Z-:_.]{1,32}$"
+                        },
+                        {
+                          "enum": [
+                            "routingcost",
+                            "delay-ow",
+                            "delay-rt",
+                            "delay-variation",
+                            "hopcount",
+                            "lossrate",
+                            "tput",
+                            "bw-residual",
+                            "bw-maxres"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "cost-mode",
+                    "cost-metric"
+                  ]
+                },
+                "multi-cost-types": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "cost-mode": {
+                        "type": "string",
+                        "enum": [
+                          "numerical",
+                          "ordinal"
+                        ]
+                      },
+                      "cost-metric": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "pattern": "^[0-9a-zA-Z-:_.]{1,32}$"
+                          },
+                          {
+                            "enum": [
+                              "routingcost",
+                              "delay-ow",
+                              "delay-rt",
+                              "delay-variation",
+                              "hopcount",
+                              "lossrate",
+                              "tput",
+                              "bw-residual",
+                              "bw-maxres"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "cost-mode",
+                      "cost-metric"
+                    ]
+                  },
+                  "minItems": 1
+                },
+                "testable-cost-types": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "cost-mode": {
+                        "type": "string",
+                        "enum": [
+                          "numerical",
+                          "ordinal"
+                        ]
+                      },
+                      "cost-metric": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "pattern": "^[0-9a-zA-Z-:_.]{1,32}$"
+                          },
+                          {
+                            "enum": [
+                              "routingcost",
+                              "delay-ow",
+                              "delay-rt",
+                              "delay-variation",
+                              "hopcount",
+                              "lossrate",
+                              "tput",
+                              "bw-residual",
+                              "bw-maxres"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "cost-mode",
+                      "cost-metric"
+                    ]
+                  },
+                  "minItems": 1
+                },
+                "constraints": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "or-constraints": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1
+                  },
+                  "minItems": 1
+                },
+                "pids": {
+                  "type": "object",
+                  "properties": {
+                    "srcs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[0-9a-zA-Z-:@_.]{1,64}$"
+                      }
+                    },
+                    "dsts": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[0-9a-zA-Z-:@_.]{1,64}$"
+                      }
+                    }
+                  },
+                  "required": [
+                    "srcs",
+                    "dsts"
+                  ],
+                  "additionalProperties": true
+                }
+              },
+              "additionalProperties": true,
+              "oneOf": [
+                {
+                  "required": [
+                    "cost-type"
+                  ]
+                },
+                {
+                  "required": [
+                    "multi-cost-types"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "properties": {
+            "calendared": {
+              "type": "array",
+              "items": {
+                "type": "boolean"
+              },
+              "minItems": 1
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

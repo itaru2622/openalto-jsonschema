@@ -1,0 +1,5 @@
+$schema: http://json-schema.org/draft-07/schema#
+$id: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/message.InfoResourceEndpointCostMap.rfc8189.rfc8896.yaml
+allOf:
+  - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc8189.yaml#/definitions/InfoResourceEndpointCostMap
+  - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc8896.yaml#/definitions/InfoResourceEndpointCostMap

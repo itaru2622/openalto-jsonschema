@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/message.ReqFilteredCostMap.rfc7285.rfc8896.json",
+  "allOf": [
+    {
+      "$ref": "https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.json#/definitions/ReqFilteredCostMap"
+    },
+    {
+      "$ref": "https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc8896.json#/definitions/ReqFilteredCostMap"
+    }
+  ]
+}

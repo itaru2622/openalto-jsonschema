@@ -1,0 +1,1647 @@
+{
+  "allOf": [
+    {
+      "allOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "meta": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "additionalProperties": true
+            },
+            {
+              "properties": {
+                "meta": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": true
+                    },
+                    {
+                      "properties": {
+                        "cost-types": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "x-patternProperties": {
+                            "^.*$": {
+                              "type": "object",
+                              "properties": {
+                                "cost-mode": {
+                                  "type": "string",
+                                  "enum": [
+                                    "numerical",
+                                    "ordinal"
+                                  ]
+                                },
+                                "cost-metric": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "pattern": "^[0-9a-zA-Z-:_.]{1,32}$"
+                                    },
+                                    {
+                                      "enum": [
+                                        "routingcost",
+                                        "delay-ow",
+                                        "delay-rt",
+                                        "delay-variation",
+                                        "hopcount",
+                                        "lossrate",
+                                        "tput",
+                                        "bw-residual",
+                                        "bw-maxres"
+                                      ]
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "cost-mode",
+                                "cost-metric"
+                              ]
+                            }
+                          }
+                        },
+                        "default-alto-network-map": {
+                          "type": "string",
+                          "pattern": "^[0-9a-zA-Z-:@_.]{1,64}$"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "resources": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "x-patternProperties": {
+                    "^[0-9a-zA-Z-:@_.]{1,64}$": {
+                      "type": "object",
+                      "properties": {
+                        "uri": {
+                          "type": "string",
+                          "pattern": "^(([^:\\/?#]+):)?(\\/\\/([^\\/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?$"
+                        },
+                        "media-type": {
+                          "type": "string",
+                          "pattern": "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\/([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"(?:[^\"\\\\]|\\.)*\"))*)$"
+                        },
+                        "accepts": {
+                          "allOf": [
+                            {
+                              "type": "string",
+                              "pattern": "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\/([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"(?:[^\"\\\\]|\\.)*\"))*)$"
+                            },
+                            {
+                              "default": null
+                            }
+                          ]
+                        },
+                        "capabilities": {
+                          "type": "object",
+                          "additionalProperties": true
+                        },
+                        "uses": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "pattern": "^[0-9a-zA-Z-:@_.]{1,64}$"
+                          }
+                        }
+                      },
+                      "required": [
+                        "uri",
+                        "media-type"
+                      ],
+                      "allOf": [
+                        {
+                          "if": {
+                            "properties": {
+                              "media-type": {
+                                "const": "application/alto-costmap+json"
+                              },
+                              "accepts": {
+                                "const": null
+                              }
+                            }
+                          },
+                          "then": {
+                            "properties": {
+                              "capabilities": {
+                                "type": "object",
+                                "properties": {
+                                  "cost-type-names": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    },
+                                    "minItems": 1,
+                                    "maxItems": 1
+                                  }
+                                },
+                                "required": [
+                                  "cost-type-names"
+                                ],
+                                "additionalProperties": true
+                              }
+                            },
+                            "required": [
+                              "uri",
+                              "media-type",
+                              "capabilities"
+                            ]
+                          }
+                        },
+                        {
+                          "if": {
+                            "properties": {
+                              "media-type": {
+                                "const": "application/alto-costmap+json"
+                              },
+                              "accepts": {
+                                "const": "application/alto-costmapfilter+json"
+                              }
+                            }
+                          },
+                          "then": {
+                            "properties": {
+                              "capabilities": {
+                                "type": "object",
+                                "properties": {
+                                  "cost-type-names": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    },
+                                    "minItems": 1
+                                  },
+                                  "cost-constraints": {
+                                    "type": "boolean",
+                                    "default": false
+                                  }
+                                },
+                                "require": [
+                                  "cost-type-names"
+                                ],
+                                "additionalProperties": true
+                              }
+                            },
+                            "required": [
+                              "uri",
+                              "media-type",
+                              "capabilities"
+                            ]
+                          }
+                        },
+                        {
+                          "if": {
+                            "properties": {
+                              "media-type": {
+                                "const": "application/alto-endpointprop+json"
+                              },
+                              "accepts": {
+                                "const": "application/alto-endpointpropparams+json"
+                              }
+                            }
+                          },
+                          "then": {
+                            "properties": {
+                              "capabilities": {
+                                "type": "object",
+                                "properties": {
+                                  "prop-types": {
+                                    "type": "array",
+                                    "items": {
+                                      "oneOf": [
+                                        {
+                                          "type": "string",
+                                          "anyOf": [
+                                            {
+                                              "pattern": "^[0-9a-zA-Z-:@_.]{1,64}\\.pid$"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "string",
+                                          "pattern": "^[0-9a-zA-Z-:_]{1,32}$"
+                                        }
+                                      ]
+                                    },
+                                    "minItems": 1
+                                  }
+                                },
+                                "required": [
+                                  "prop-types"
+                                ],
+                                "additionalProperties": true
+                              }
+                            },
+                            "required": [
+                              "uri",
+                              "media-type",
+                              "capabilities"
+                            ]
+                          }
+                        },
+                        {
+                          "if": {
+                            "properties": {
+                              "media-type": {
+                                "const": "application/alto-endpointcost+json"
+                              },
+                              "accepts": {
+                                "const": "application/alto-endpointcostparams+json"
+                              }
+                            }
+                          },
+                          "then": {
+                            "properties": {
+                              "capabilities": {
+                                "type": "object",
+                                "properties": {
+                                  "cost-type-names": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    },
+                                    "minItems": 1
+                                  },
+                                  "cost-constraints": {
+                                    "type": "boolean",
+                                    "default": false
+                                  }
+                                },
+                                "require": [
+                                  "cost-type-names"
+                                ],
+                                "additionalProperties": true
+                              }
+                            },
+                            "required": [
+                              "uri",
+                              "media-type",
+                              "capabilities"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              "required": [
+                "resources"
+              ]
+            }
+          ]
+        },
+        {
+          "properties": {
+            "resources": {
+              "allOf": [
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "x-patternProperties": {
+                    "^[0-9a-zA-Z-:@_.]{1,64}$": {
+                      "type": "object",
+                      "properties": {
+                        "uri": {
+                          "type": "string",
+                          "pattern": "^(([^:\\/?#]+):)?(\\/\\/([^\\/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?$"
+                        },
+                        "media-type": {
+                          "type": "string",
+                          "pattern": "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\/([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"(?:[^\"\\\\]|\\.)*\"))*)$"
+                        },
+                        "accepts": {
+                          "allOf": [
+                            {
+                              "type": "string",
+                              "pattern": "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\/([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"(?:[^\"\\\\]|\\.)*\"))*)$"
+                            },
+                            {
+                              "default": null
+                            }
+                          ]
+                        },
+                        "capabilities": {
+                          "type": "object",
+                          "additionalProperties": true
+                        },
+                        "uses": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "pattern": "^[0-9a-zA-Z-:@_.]{1,64}$"
+                          }
+                        }
+                      },
+                      "required": [
+                        "uri",
+                        "media-type"
+                      ],
+                      "allOf": [
+                        {
+                          "if": {
+                            "properties": {
+                              "media-type": {
+                                "const": "application/alto-costmap+json"
+                              },
+                              "accepts": {
+                                "const": null
+                              }
+                            }
+                          },
+                          "then": {
+                            "properties": {
+                              "capabilities": {
+                                "type": "object",
+                                "properties": {
+                                  "cost-type-names": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    },
+                                    "minItems": 1,
+                                    "maxItems": 1
+                                  }
+                                },
+                                "required": [
+                                  "cost-type-names"
+                                ],
+                                "additionalProperties": true
+                              }
+                            },
+                            "required": [
+                              "uri",
+                              "media-type",
+                              "capabilities"
+                            ]
+                          }
+                        },
+                        {
+                          "if": {
+                            "properties": {
+                              "media-type": {
+                                "const": "application/alto-costmap+json"
+                              },
+                              "accepts": {
+                                "const": "application/alto-costmapfilter+json"
+                              }
+                            }
+                          },
+                          "then": {
+                            "properties": {
+                              "capabilities": {
+                                "type": "object",
+                                "properties": {
+                                  "cost-type-names": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    },
+                                    "minItems": 1
+                                  },
+                                  "cost-constraints": {
+                                    "type": "boolean",
+                                    "default": false
+                                  }
+                                },
+                                "require": [
+                                  "cost-type-names"
+                                ],
+                                "additionalProperties": true
+                              }
+                            },
+                            "required": [
+                              "uri",
+                              "media-type",
+                              "capabilities"
+                            ]
+                          }
+                        },
+                        {
+                          "if": {
+                            "properties": {
+                              "media-type": {
+                                "const": "application/alto-endpointprop+json"
+                              },
+                              "accepts": {
+                                "const": "application/alto-endpointpropparams+json"
+                              }
+                            }
+                          },
+                          "then": {
+                            "properties": {
+                              "capabilities": {
+                                "type": "object",
+                                "properties": {
+                                  "prop-types": {
+                                    "type": "array",
+                                    "items": {
+                                      "oneOf": [
+                                        {
+                                          "type": "string",
+                                          "anyOf": [
+                                            {
+                                              "pattern": "^[0-9a-zA-Z-:@_.]{1,64}\\.pid$"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "string",
+                                          "pattern": "^[0-9a-zA-Z-:_]{1,32}$"
+                                        }
+                                      ]
+                                    },
+                                    "minItems": 1
+                                  }
+                                },
+                                "required": [
+                                  "prop-types"
+                                ],
+                                "additionalProperties": true
+                              }
+                            },
+                            "required": [
+                              "uri",
+                              "media-type",
+                              "capabilities"
+                            ]
+                          }
+                        },
+                        {
+                          "if": {
+                            "properties": {
+                              "media-type": {
+                                "const": "application/alto-endpointcost+json"
+                              },
+                              "accepts": {
+                                "const": "application/alto-endpointcostparams+json"
+                              }
+                            }
+                          },
+                          "then": {
+                            "properties": {
+                              "capabilities": {
+                                "type": "object",
+                                "properties": {
+                                  "cost-type-names": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    },
+                                    "minItems": 1
+                                  },
+                                  "cost-constraints": {
+                                    "type": "boolean",
+                                    "default": false
+                                  }
+                                },
+                                "require": [
+                                  "cost-type-names"
+                                ],
+                                "additionalProperties": true
+                              }
+                            },
+                            "required": [
+                              "uri",
+                              "media-type",
+                              "capabilities"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "x-patternProperties": {
+                    "^[0-9a-zA-Z-:@_.]{1,64}$": {
+                      "allOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "uri": {
+                              "type": "string",
+                              "pattern": "^(([^:\\/?#]+):)?(\\/\\/([^\\/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?$"
+                            },
+                            "media-type": {
+                              "type": "string",
+                              "pattern": "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\/([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"(?:[^\"\\\\]|\\.)*\"))*)$"
+                            },
+                            "accepts": {
+                              "allOf": [
+                                {
+                                  "type": "string",
+                                  "pattern": "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\/([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"(?:[^\"\\\\]|\\.)*\"))*)$"
+                                },
+                                {
+                                  "default": null
+                                }
+                              ]
+                            },
+                            "capabilities": {
+                              "type": "object",
+                              "additionalProperties": true
+                            },
+                            "uses": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "pattern": "^[0-9a-zA-Z-:@_.]{1,64}$"
+                              }
+                            }
+                          },
+                          "required": [
+                            "uri",
+                            "media-type"
+                          ],
+                          "allOf": [
+                            {
+                              "if": {
+                                "properties": {
+                                  "media-type": {
+                                    "const": "application/alto-costmap+json"
+                                  },
+                                  "accepts": {
+                                    "const": null
+                                  }
+                                }
+                              },
+                              "then": {
+                                "properties": {
+                                  "capabilities": {
+                                    "type": "object",
+                                    "properties": {
+                                      "cost-type-names": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        },
+                                        "minItems": 1,
+                                        "maxItems": 1
+                                      }
+                                    },
+                                    "required": [
+                                      "cost-type-names"
+                                    ],
+                                    "additionalProperties": true
+                                  }
+                                },
+                                "required": [
+                                  "uri",
+                                  "media-type",
+                                  "capabilities"
+                                ]
+                              }
+                            },
+                            {
+                              "if": {
+                                "properties": {
+                                  "media-type": {
+                                    "const": "application/alto-costmap+json"
+                                  },
+                                  "accepts": {
+                                    "const": "application/alto-costmapfilter+json"
+                                  }
+                                }
+                              },
+                              "then": {
+                                "properties": {
+                                  "capabilities": {
+                                    "type": "object",
+                                    "properties": {
+                                      "cost-type-names": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        },
+                                        "minItems": 1
+                                      },
+                                      "cost-constraints": {
+                                        "type": "boolean",
+                                        "default": false
+                                      }
+                                    },
+                                    "require": [
+                                      "cost-type-names"
+                                    ],
+                                    "additionalProperties": true
+                                  }
+                                },
+                                "required": [
+                                  "uri",
+                                  "media-type",
+                                  "capabilities"
+                                ]
+                              }
+                            },
+                            {
+                              "if": {
+                                "properties": {
+                                  "media-type": {
+                                    "const": "application/alto-endpointprop+json"
+                                  },
+                                  "accepts": {
+                                    "const": "application/alto-endpointpropparams+json"
+                                  }
+                                }
+                              },
+                              "then": {
+                                "properties": {
+                                  "capabilities": {
+                                    "type": "object",
+                                    "properties": {
+                                      "prop-types": {
+                                        "type": "array",
+                                        "items": {
+                                          "oneOf": [
+                                            {
+                                              "type": "string",
+                                              "anyOf": [
+                                                {
+                                                  "pattern": "^[0-9a-zA-Z-:@_.]{1,64}\\.pid$"
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "type": "string",
+                                              "pattern": "^[0-9a-zA-Z-:_]{1,32}$"
+                                            }
+                                          ]
+                                        },
+                                        "minItems": 1
+                                      }
+                                    },
+                                    "required": [
+                                      "prop-types"
+                                    ],
+                                    "additionalProperties": true
+                                  }
+                                },
+                                "required": [
+                                  "uri",
+                                  "media-type",
+                                  "capabilities"
+                                ]
+                              }
+                            },
+                            {
+                              "if": {
+                                "properties": {
+                                  "media-type": {
+                                    "const": "application/alto-endpointcost+json"
+                                  },
+                                  "accepts": {
+                                    "const": "application/alto-endpointcostparams+json"
+                                  }
+                                }
+                              },
+                              "then": {
+                                "properties": {
+                                  "capabilities": {
+                                    "type": "object",
+                                    "properties": {
+                                      "cost-type-names": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        },
+                                        "minItems": 1
+                                      },
+                                      "cost-constraints": {
+                                        "type": "boolean",
+                                        "default": false
+                                      }
+                                    },
+                                    "require": [
+                                      "cost-type-names"
+                                    ],
+                                    "additionalProperties": true
+                                  }
+                                },
+                                "required": [
+                                  "uri",
+                                  "media-type",
+                                  "capabilities"
+                                ]
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "if": {
+                            "properties": {
+                              "media-type": {
+                                "const": "application/alto-costmap+json"
+                              },
+                              "accepts": {
+                                "const": "application/alto-costmapfilter+json"
+                              }
+                            }
+                          },
+                          "then": {
+                            "properties": {
+                              "capabilities": {
+                                "allOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "cost-type-names": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        },
+                                        "minItems": 1
+                                      },
+                                      "cost-constraints": {
+                                        "type": "boolean",
+                                        "default": false
+                                      }
+                                    },
+                                    "require": [
+                                      "cost-type-names"
+                                    ],
+                                    "additionalProperties": true
+                                  },
+                                  {
+                                    "properties": {
+                                      "max-cost-types": {
+                                        "type": "number"
+                                      },
+                                      "testable-cost-type-names": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        },
+                                        "minItems": 1
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "if": {
+                            "properties": {
+                              "media-type": {
+                                "const": "application/alto-endpointcost+json"
+                              },
+                              "accepts": {
+                                "const": "application/alto-endpointcostparams+json"
+                              }
+                            }
+                          },
+                          "then": {
+                            "properties": {
+                              "capabilities": {
+                                "allOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "cost-type-names": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        },
+                                        "minItems": 1
+                                      },
+                                      "cost-constraints": {
+                                        "type": "boolean",
+                                        "default": false
+                                      }
+                                    },
+                                    "require": [
+                                      "cost-type-names"
+                                    ],
+                                    "additionalProperties": true
+                                  },
+                                  {
+                                    "properties": {
+                                      "max-cost-types": {
+                                        "type": "number"
+                                      },
+                                      "testable-cost-type-names": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        },
+                                        "minItems": 1
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "allOf": [
+        {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "meta": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "additionalProperties": true
+            },
+            {
+              "properties": {
+                "meta": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": true
+                    },
+                    {
+                      "properties": {
+                        "cost-types": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "x-patternProperties": {
+                            "^.*$": {
+                              "type": "object",
+                              "properties": {
+                                "cost-mode": {
+                                  "type": "string",
+                                  "enum": [
+                                    "numerical",
+                                    "ordinal"
+                                  ]
+                                },
+                                "cost-metric": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "pattern": "^[0-9a-zA-Z-:_.]{1,32}$"
+                                    },
+                                    {
+                                      "enum": [
+                                        "routingcost",
+                                        "delay-ow",
+                                        "delay-rt",
+                                        "delay-variation",
+                                        "hopcount",
+                                        "lossrate",
+                                        "tput",
+                                        "bw-residual",
+                                        "bw-maxres"
+                                      ]
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "cost-mode",
+                                "cost-metric"
+                              ]
+                            }
+                          }
+                        },
+                        "default-alto-network-map": {
+                          "type": "string",
+                          "pattern": "^[0-9a-zA-Z-:@_.]{1,64}$"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "resources": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "x-patternProperties": {
+                    "^[0-9a-zA-Z-:@_.]{1,64}$": {
+                      "type": "object",
+                      "properties": {
+                        "uri": {
+                          "type": "string",
+                          "pattern": "^(([^:\\/?#]+):)?(\\/\\/([^\\/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?$"
+                        },
+                        "media-type": {
+                          "type": "string",
+                          "pattern": "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\/([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"(?:[^\"\\\\]|\\.)*\"))*)$"
+                        },
+                        "accepts": {
+                          "allOf": [
+                            {
+                              "type": "string",
+                              "pattern": "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\/([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"(?:[^\"\\\\]|\\.)*\"))*)$"
+                            },
+                            {
+                              "default": null
+                            }
+                          ]
+                        },
+                        "capabilities": {
+                          "type": "object",
+                          "additionalProperties": true
+                        },
+                        "uses": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "pattern": "^[0-9a-zA-Z-:@_.]{1,64}$"
+                          }
+                        }
+                      },
+                      "required": [
+                        "uri",
+                        "media-type"
+                      ],
+                      "allOf": [
+                        {
+                          "if": {
+                            "properties": {
+                              "media-type": {
+                                "const": "application/alto-costmap+json"
+                              },
+                              "accepts": {
+                                "const": null
+                              }
+                            }
+                          },
+                          "then": {
+                            "properties": {
+                              "capabilities": {
+                                "type": "object",
+                                "properties": {
+                                  "cost-type-names": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    },
+                                    "minItems": 1,
+                                    "maxItems": 1
+                                  }
+                                },
+                                "required": [
+                                  "cost-type-names"
+                                ],
+                                "additionalProperties": true
+                              }
+                            },
+                            "required": [
+                              "uri",
+                              "media-type",
+                              "capabilities"
+                            ]
+                          }
+                        },
+                        {
+                          "if": {
+                            "properties": {
+                              "media-type": {
+                                "const": "application/alto-costmap+json"
+                              },
+                              "accepts": {
+                                "const": "application/alto-costmapfilter+json"
+                              }
+                            }
+                          },
+                          "then": {
+                            "properties": {
+                              "capabilities": {
+                                "type": "object",
+                                "properties": {
+                                  "cost-type-names": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    },
+                                    "minItems": 1
+                                  },
+                                  "cost-constraints": {
+                                    "type": "boolean",
+                                    "default": false
+                                  }
+                                },
+                                "require": [
+                                  "cost-type-names"
+                                ],
+                                "additionalProperties": true
+                              }
+                            },
+                            "required": [
+                              "uri",
+                              "media-type",
+                              "capabilities"
+                            ]
+                          }
+                        },
+                        {
+                          "if": {
+                            "properties": {
+                              "media-type": {
+                                "const": "application/alto-endpointprop+json"
+                              },
+                              "accepts": {
+                                "const": "application/alto-endpointpropparams+json"
+                              }
+                            }
+                          },
+                          "then": {
+                            "properties": {
+                              "capabilities": {
+                                "type": "object",
+                                "properties": {
+                                  "prop-types": {
+                                    "type": "array",
+                                    "items": {
+                                      "oneOf": [
+                                        {
+                                          "type": "string",
+                                          "anyOf": [
+                                            {
+                                              "pattern": "^[0-9a-zA-Z-:@_.]{1,64}\\.pid$"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "string",
+                                          "pattern": "^[0-9a-zA-Z-:_]{1,32}$"
+                                        }
+                                      ]
+                                    },
+                                    "minItems": 1
+                                  }
+                                },
+                                "required": [
+                                  "prop-types"
+                                ],
+                                "additionalProperties": true
+                              }
+                            },
+                            "required": [
+                              "uri",
+                              "media-type",
+                              "capabilities"
+                            ]
+                          }
+                        },
+                        {
+                          "if": {
+                            "properties": {
+                              "media-type": {
+                                "const": "application/alto-endpointcost+json"
+                              },
+                              "accepts": {
+                                "const": "application/alto-endpointcostparams+json"
+                              }
+                            }
+                          },
+                          "then": {
+                            "properties": {
+                              "capabilities": {
+                                "type": "object",
+                                "properties": {
+                                  "cost-type-names": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    },
+                                    "minItems": 1
+                                  },
+                                  "cost-constraints": {
+                                    "type": "boolean",
+                                    "default": false
+                                  }
+                                },
+                                "require": [
+                                  "cost-type-names"
+                                ],
+                                "additionalProperties": true
+                              }
+                            },
+                            "required": [
+                              "uri",
+                              "media-type",
+                              "capabilities"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              "required": [
+                "resources"
+              ]
+            }
+          ]
+        },
+        {
+          "properties": {
+            "resources": {
+              "allOf": [
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "x-patternProperties": {
+                    "^[0-9a-zA-Z-:@_.]{1,64}$": {
+                      "type": "object",
+                      "properties": {
+                        "uri": {
+                          "type": "string",
+                          "pattern": "^(([^:\\/?#]+):)?(\\/\\/([^\\/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?$"
+                        },
+                        "media-type": {
+                          "type": "string",
+                          "pattern": "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\/([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"(?:[^\"\\\\]|\\.)*\"))*)$"
+                        },
+                        "accepts": {
+                          "allOf": [
+                            {
+                              "type": "string",
+                              "pattern": "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\/([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"(?:[^\"\\\\]|\\.)*\"))*)$"
+                            },
+                            {
+                              "default": null
+                            }
+                          ]
+                        },
+                        "capabilities": {
+                          "type": "object",
+                          "additionalProperties": true
+                        },
+                        "uses": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "pattern": "^[0-9a-zA-Z-:@_.]{1,64}$"
+                          }
+                        }
+                      },
+                      "required": [
+                        "uri",
+                        "media-type"
+                      ],
+                      "allOf": [
+                        {
+                          "if": {
+                            "properties": {
+                              "media-type": {
+                                "const": "application/alto-costmap+json"
+                              },
+                              "accepts": {
+                                "const": null
+                              }
+                            }
+                          },
+                          "then": {
+                            "properties": {
+                              "capabilities": {
+                                "type": "object",
+                                "properties": {
+                                  "cost-type-names": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    },
+                                    "minItems": 1,
+                                    "maxItems": 1
+                                  }
+                                },
+                                "required": [
+                                  "cost-type-names"
+                                ],
+                                "additionalProperties": true
+                              }
+                            },
+                            "required": [
+                              "uri",
+                              "media-type",
+                              "capabilities"
+                            ]
+                          }
+                        },
+                        {
+                          "if": {
+                            "properties": {
+                              "media-type": {
+                                "const": "application/alto-costmap+json"
+                              },
+                              "accepts": {
+                                "const": "application/alto-costmapfilter+json"
+                              }
+                            }
+                          },
+                          "then": {
+                            "properties": {
+                              "capabilities": {
+                                "type": "object",
+                                "properties": {
+                                  "cost-type-names": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    },
+                                    "minItems": 1
+                                  },
+                                  "cost-constraints": {
+                                    "type": "boolean",
+                                    "default": false
+                                  }
+                                },
+                                "require": [
+                                  "cost-type-names"
+                                ],
+                                "additionalProperties": true
+                              }
+                            },
+                            "required": [
+                              "uri",
+                              "media-type",
+                              "capabilities"
+                            ]
+                          }
+                        },
+                        {
+                          "if": {
+                            "properties": {
+                              "media-type": {
+                                "const": "application/alto-endpointprop+json"
+                              },
+                              "accepts": {
+                                "const": "application/alto-endpointpropparams+json"
+                              }
+                            }
+                          },
+                          "then": {
+                            "properties": {
+                              "capabilities": {
+                                "type": "object",
+                                "properties": {
+                                  "prop-types": {
+                                    "type": "array",
+                                    "items": {
+                                      "oneOf": [
+                                        {
+                                          "type": "string",
+                                          "anyOf": [
+                                            {
+                                              "pattern": "^[0-9a-zA-Z-:@_.]{1,64}\\.pid$"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "string",
+                                          "pattern": "^[0-9a-zA-Z-:_]{1,32}$"
+                                        }
+                                      ]
+                                    },
+                                    "minItems": 1
+                                  }
+                                },
+                                "required": [
+                                  "prop-types"
+                                ],
+                                "additionalProperties": true
+                              }
+                            },
+                            "required": [
+                              "uri",
+                              "media-type",
+                              "capabilities"
+                            ]
+                          }
+                        },
+                        {
+                          "if": {
+                            "properties": {
+                              "media-type": {
+                                "const": "application/alto-endpointcost+json"
+                              },
+                              "accepts": {
+                                "const": "application/alto-endpointcostparams+json"
+                              }
+                            }
+                          },
+                          "then": {
+                            "properties": {
+                              "capabilities": {
+                                "type": "object",
+                                "properties": {
+                                  "cost-type-names": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    },
+                                    "minItems": 1
+                                  },
+                                  "cost-constraints": {
+                                    "type": "boolean",
+                                    "default": false
+                                  }
+                                },
+                                "require": [
+                                  "cost-type-names"
+                                ],
+                                "additionalProperties": true
+                              }
+                            },
+                            "required": [
+                              "uri",
+                              "media-type",
+                              "capabilities"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "x-patternProperties": {
+                    "^[0-9a-zA-Z-:@_.]{1,64}$": {
+                      "allOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "uri": {
+                              "type": "string",
+                              "pattern": "^(([^:\\/?#]+):)?(\\/\\/([^\\/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?$"
+                            },
+                            "media-type": {
+                              "type": "string",
+                              "pattern": "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\/([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"(?:[^\"\\\\]|\\.)*\"))*)$"
+                            },
+                            "accepts": {
+                              "allOf": [
+                                {
+                                  "type": "string",
+                                  "pattern": "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\/([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"(?:[^\"\\\\]|\\.)*\"))*)$"
+                                },
+                                {
+                                  "default": null
+                                }
+                              ]
+                            },
+                            "capabilities": {
+                              "type": "object",
+                              "additionalProperties": true
+                            },
+                            "uses": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "pattern": "^[0-9a-zA-Z-:@_.]{1,64}$"
+                              }
+                            }
+                          },
+                          "required": [
+                            "uri",
+                            "media-type"
+                          ],
+                          "allOf": [
+                            {
+                              "if": {
+                                "properties": {
+                                  "media-type": {
+                                    "const": "application/alto-costmap+json"
+                                  },
+                                  "accepts": {
+                                    "const": null
+                                  }
+                                }
+                              },
+                              "then": {
+                                "properties": {
+                                  "capabilities": {
+                                    "type": "object",
+                                    "properties": {
+                                      "cost-type-names": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        },
+                                        "minItems": 1,
+                                        "maxItems": 1
+                                      }
+                                    },
+                                    "required": [
+                                      "cost-type-names"
+                                    ],
+                                    "additionalProperties": true
+                                  }
+                                },
+                                "required": [
+                                  "uri",
+                                  "media-type",
+                                  "capabilities"
+                                ]
+                              }
+                            },
+                            {
+                              "if": {
+                                "properties": {
+                                  "media-type": {
+                                    "const": "application/alto-costmap+json"
+                                  },
+                                  "accepts": {
+                                    "const": "application/alto-costmapfilter+json"
+                                  }
+                                }
+                              },
+                              "then": {
+                                "properties": {
+                                  "capabilities": {
+                                    "type": "object",
+                                    "properties": {
+                                      "cost-type-names": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        },
+                                        "minItems": 1
+                                      },
+                                      "cost-constraints": {
+                                        "type": "boolean",
+                                        "default": false
+                                      }
+                                    },
+                                    "require": [
+                                      "cost-type-names"
+                                    ],
+                                    "additionalProperties": true
+                                  }
+                                },
+                                "required": [
+                                  "uri",
+                                  "media-type",
+                                  "capabilities"
+                                ]
+                              }
+                            },
+                            {
+                              "if": {
+                                "properties": {
+                                  "media-type": {
+                                    "const": "application/alto-endpointprop+json"
+                                  },
+                                  "accepts": {
+                                    "const": "application/alto-endpointpropparams+json"
+                                  }
+                                }
+                              },
+                              "then": {
+                                "properties": {
+                                  "capabilities": {
+                                    "type": "object",
+                                    "properties": {
+                                      "prop-types": {
+                                        "type": "array",
+                                        "items": {
+                                          "oneOf": [
+                                            {
+                                              "type": "string",
+                                              "anyOf": [
+                                                {
+                                                  "pattern": "^[0-9a-zA-Z-:@_.]{1,64}\\.pid$"
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "type": "string",
+                                              "pattern": "^[0-9a-zA-Z-:_]{1,32}$"
+                                            }
+                                          ]
+                                        },
+                                        "minItems": 1
+                                      }
+                                    },
+                                    "required": [
+                                      "prop-types"
+                                    ],
+                                    "additionalProperties": true
+                                  }
+                                },
+                                "required": [
+                                  "uri",
+                                  "media-type",
+                                  "capabilities"
+                                ]
+                              }
+                            },
+                            {
+                              "if": {
+                                "properties": {
+                                  "media-type": {
+                                    "const": "application/alto-endpointcost+json"
+                                  },
+                                  "accepts": {
+                                    "const": "application/alto-endpointcostparams+json"
+                                  }
+                                }
+                              },
+                              "then": {
+                                "properties": {
+                                  "capabilities": {
+                                    "type": "object",
+                                    "properties": {
+                                      "cost-type-names": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        },
+                                        "minItems": 1
+                                      },
+                                      "cost-constraints": {
+                                        "type": "boolean",
+                                        "default": false
+                                      }
+                                    },
+                                    "require": [
+                                      "cost-type-names"
+                                    ],
+                                    "additionalProperties": true
+                                  }
+                                },
+                                "required": [
+                                  "uri",
+                                  "media-type",
+                                  "capabilities"
+                                ]
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "if": {
+                            "properties": {
+                              "media-type": {
+                                "const": "text/event-stream"
+                              },
+                              "accepts": {
+                                "const": "application/alto-updatestreamparams+json"
+                              }
+                            }
+                          },
+                          "then": {
+                            "properties": {
+                              "capabilities": {
+                                "type": "object",
+                                "properties": {
+                                  "incremental-change-media-types": {
+                                    "type": "object",
+                                    "patternProperties": {
+                                      "^[0-9a-zA-Z-:@_.]{1,64}$": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": false
+                                  },
+                                  "supported-stream-control": {
+                                    "type": "boolean"
+                                  }
+                                },
+                                "required": [
+                                  "incremental-change-media-types",
+                                  "supported-stream-control"
+                                ],
+                                "additionalProperties": true
+                              }
+                            },
+                            "required": [
+                              "uri",
+                              "media-type",
+                              "capabilities"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

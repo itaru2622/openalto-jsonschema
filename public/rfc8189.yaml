@@ -1,0 +1,168 @@
+$schema: http://json-schema.org/draft-07/schema#
+$id: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc8189.yaml
+oneOf:
+  - $ref: '#/definitions/ReqFilteredCostMap'
+  - $ref: '#/definitions/ReqEndpointCostMap'
+definitions:
+  InfoResourceDirectory:
+    allOf:
+      - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/InfoResourceDirectory
+      - properties:
+          resources:
+            $ref: '#/definitions/IRDResourceEntries'
+  IRDResourceEntries:
+    allOf:
+      - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/IRDResourceEntries
+      - patternProperties:
+          ^[0-9a-zA-Z-:@_.]{1,64}$:
+            $ref: '#/definitions/IRDResourceEntry'
+  IRDResourceEntry:
+    allOf:
+      - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/IRDResourceEntry
+      - if:
+          properties:
+            media-type:
+              const: application/alto-costmap+json
+            accepts:
+              const: application/alto-costmapfilter+json
+        then:
+          properties:
+            capabilities:
+              $ref: '#/definitions/FilteredCostMapCapabilities'
+      - if:
+          properties:
+            media-type:
+              const: application/alto-endpointcost+json
+            accepts:
+              const: application/alto-endpointcostparams+json
+        then:
+          properties:
+            capabilities:
+              $ref: '#/definitions/FilteredCostMapCapabilities'
+  FilteredCostMapCapabilities:
+    allOf:
+      - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/FilteredCostMapCapabilities
+      - properties:
+          max-cost-types:
+            type: number
+          testable-cost-type-names:
+            type: array
+            items:
+              type: string
+            minItems: 1
+  ReqFilteredCostMap:
+    type: object
+    properties:
+      cost-type:
+        $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/CostType
+      multi-cost-types:
+        type: array
+        items:
+          $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/CostType
+        minItems: 1
+      testable-cost-types:
+        type: array
+        items:
+          $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/CostType
+        minItems: 1
+      constraints:
+        type: array
+        items:
+          type: string
+      or-constraints:
+        type: array
+        items:
+          type: array
+          items:
+            type: string
+          minItems: 1
+        minItems: 1
+      pids:
+        $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/PIDFilter
+    additionalProperties: true
+    oneOf:
+      - required:
+          - cost-type
+      - required:
+          - multi-cost-types
+  InfoResourceCostMap:
+    allOf:
+      - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/ResponseEntityBase
+      - properties:
+          meta:
+            allOf:
+              - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/ServiceResponseMeta
+              - properties:
+                  dependent-vtags:
+                    minItems: 1
+                    maxItems: 1
+                  multi-cost-types:
+                    type: array
+                    items:
+                      $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/CostType
+                    minItems: 1
+                required:
+                  - dependent-vtags
+                  - multi-cost-types
+          cost-map:
+            $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/CostMapData
+        required:
+          - meta
+          - cost-map
+  ReqEndpointCostMap:
+    type: object
+    properties:
+      cost-type:
+        $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/CostType
+      multi-cost-types:
+        type: array
+        items:
+          $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/CostType
+        minItems: 1
+      constraints:
+        type: array
+        items:
+          type: string
+      testable-cost-types:
+        type: array
+        items:
+          $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/CostType
+        minItems: 1
+      or-constraints:
+        type: array
+        items:
+          type: array
+          items:
+            type: string
+          minItems: 1
+        minItems: 1
+      endpoints:
+        $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/EndpointFilter
+    additionalProperties: true
+    oneOf:
+      - required:
+          - cost-type
+          - endpoints
+      - required:
+          - multi-cost-types
+          - endpoints
+  InfoResourceEndpointCostMap:
+    allOf:
+      - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/ResponseEntityBase
+      - properties:
+          meta:
+            allOf:
+              - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/ServiceResponseMeta
+              - properties:
+                  multi-cost-types:
+                    type: array
+                    items:
+                      $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/CostType
+                    minItems: 1
+                required:
+                  - multi-cost-types
+          endpoint-cost-map:
+            $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/EndpointCostMapData
+        required:
+          - meta
+          - endpoint-cost-map

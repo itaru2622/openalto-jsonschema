@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/draft-ietf-alto-path-vector.json",
+  "definitions": {
+    "PVReqFilteredCostMap": {
+      "allOf": [
+        {
+          "$ref": "https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.json#/definitions/ReqFilteredCostMap"
+        },
+        {
+          "properties": {
+            "ane-property-names": {
+              "type": "array",
+              "items": {
+                "$ref": "https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/draft-ietf-alto-unified-props-new.json#/definitions/EntityPropertyName"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "PVFilteredCostMapCapabilities": {
+      "allOf": [
+        {
+          "$ref": "https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.json#/definitions/FilteredCostMapCapabilities"
+        },
+        {
+          "properties": {
+            "ane-property-names": {
+              "type": "array",
+              "items": {
+                "$ref": "https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/draft-ietf-alto-unified-props-new.json#/definitions/EntityPropertyName"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "PVReqEndpointCostMap": {
+      "allOf": [
+        {
+          "$ref": "https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.json#/definitions/ReqEndpointCostMap"
+        },
+        {
+          "properties": {
+            "ane-property-names": {
+              "type": "array",
+              "items": {
+                "$ref": "https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/draft-ietf-alto-unified-props-new.json#/definitions/EntityPropertyName"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

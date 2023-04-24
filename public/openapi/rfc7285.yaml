@@ -1,0 +1,2228 @@
+oneOf:
+  - allOf:
+      - type: object
+        properties:
+          meta:
+            type: object
+            additionalProperties: true
+        additionalProperties: true
+      - properties:
+          meta:
+            allOf:
+              - type: object
+                additionalProperties: true
+              - properties:
+                  cost-types:
+                    type: object
+                    additionalProperties: false
+                    x-patternProperties:
+                      ^.*$:
+                        type: object
+                        properties:
+                          cost-mode:
+                            type: string
+                            enum:
+                              - numerical
+                              - ordinal
+                          cost-metric:
+                            anyOf:
+                              - type: string
+                                pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+                              - enum:
+                                  - routingcost
+                                  - delay-ow
+                                  - delay-rt
+                                  - delay-variation
+                                  - hopcount
+                                  - lossrate
+                                  - tput
+                                  - bw-residual
+                                  - bw-maxres
+                        required:
+                          - cost-mode
+                          - cost-metric
+                  default-alto-network-map:
+                    type: string
+                    pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+          resources:
+            type: object
+            additionalProperties: false
+            x-patternProperties:
+              ^[0-9a-zA-Z-:@_.]{1,64}$:
+                type: object
+                properties:
+                  uri:
+                    type: string
+                    pattern: ^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?$
+                  media-type:
+                    type: string
+                    pattern: "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\\
+                      /([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"\
+                      (?:[^\"\\\\]|\\.)*\"))*)$"
+                  accepts:
+                    allOf:
+                      - type: string
+                        pattern: "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\\
+                          /([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"\
+                          (?:[^\"\\\\]|\\.)*\"))*)$"
+                      - default: null
+                  capabilities:
+                    type: object
+                    additionalProperties: true
+                  uses:
+                    type: array
+                    items:
+                      type: string
+                      pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                required:
+                  - uri
+                  - media-type
+                allOf:
+                  - oneOf:
+                      - allOf:
+                          - properties:
+                              media-type:
+                                enum:
+                                  - application/alto-costmap+json
+                              accepts:
+                                enum:
+                                  - null
+                          - properties:
+                              capabilities:
+                                type: object
+                                properties:
+                                  cost-type-names:
+                                    type: array
+                                    items:
+                                      type: string
+                                    minItems: 1
+                                    maxItems: 1
+                                required:
+                                  - cost-type-names
+                                additionalProperties: true
+                            required:
+                              - uri
+                              - media-type
+                              - capabilities
+                      - allOf:
+                          - not:
+                              properties:
+                                media-type:
+                                  enum:
+                                    - application/alto-costmap+json
+                                accepts:
+                                  enum:
+                                    - null
+                  - oneOf:
+                      - allOf:
+                          - properties:
+                              media-type:
+                                enum:
+                                  - application/alto-costmap+json
+                              accepts:
+                                enum:
+                                  - application/alto-costmapfilter+json
+                          - properties:
+                              capabilities:
+                                type: object
+                                properties:
+                                  cost-type-names:
+                                    type: array
+                                    items:
+                                      type: string
+                                    minItems: 1
+                                  cost-constraints:
+                                    type: boolean
+                                    default: false
+                                additionalProperties: true
+                                x-require:
+                                  - cost-type-names
+                            required:
+                              - uri
+                              - media-type
+                              - capabilities
+                      - allOf:
+                          - not:
+                              properties:
+                                media-type:
+                                  enum:
+                                    - application/alto-costmap+json
+                                accepts:
+                                  enum:
+                                    - application/alto-costmapfilter+json
+                  - oneOf:
+                      - allOf:
+                          - properties:
+                              media-type:
+                                enum:
+                                  - application/alto-endpointprop+json
+                              accepts:
+                                enum:
+                                  - application/alto-endpointpropparams+json
+                          - properties:
+                              capabilities:
+                                type: object
+                                properties:
+                                  prop-types:
+                                    type: array
+                                    items:
+                                      oneOf:
+                                        - type: string
+                                          anyOf:
+                                            - pattern: ^[0-9a-zA-Z-:@_.]{1,64}\.pid$
+                                        - type: string
+                                          pattern: ^[0-9a-zA-Z-:_]{1,32}$
+                                    minItems: 1
+                                required:
+                                  - prop-types
+                                additionalProperties: true
+                            required:
+                              - uri
+                              - media-type
+                              - capabilities
+                      - allOf:
+                          - not:
+                              properties:
+                                media-type:
+                                  enum:
+                                    - application/alto-endpointprop+json
+                                accepts:
+                                  enum:
+                                    - application/alto-endpointpropparams+json
+                  - oneOf:
+                      - allOf:
+                          - properties:
+                              media-type:
+                                enum:
+                                  - application/alto-endpointcost+json
+                              accepts:
+                                enum:
+                                  - application/alto-endpointcostparams+json
+                          - properties:
+                              capabilities:
+                                type: object
+                                properties:
+                                  cost-type-names:
+                                    type: array
+                                    items:
+                                      type: string
+                                    minItems: 1
+                                  cost-constraints:
+                                    type: boolean
+                                    default: false
+                                additionalProperties: true
+                                x-require:
+                                  - cost-type-names
+                            required:
+                              - uri
+                              - media-type
+                              - capabilities
+                      - allOf:
+                          - not:
+                              properties:
+                                media-type:
+                                  enum:
+                                    - application/alto-endpointcost+json
+                                accepts:
+                                  enum:
+                                    - application/alto-endpointcostparams+json
+        required:
+          - resources
+  - allOf:
+      - type: object
+        properties:
+          meta:
+            type: object
+            additionalProperties: true
+        additionalProperties: true
+      - properties:
+          meta:
+            allOf:
+              - allOf:
+                  - type: object
+                    additionalProperties: true
+                  - properties:
+                      vtag:
+                        type: object
+                        properties:
+                          resource-id:
+                            type: string
+                            pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                          tag:
+                            type: string
+                            pattern: ^[!-~]+$
+                        required:
+                          - resource-id
+                          - tag
+                      dependent-vtags:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            resource-id:
+                              type: string
+                              pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                            tag:
+                              type: string
+                              pattern: ^[!-~]+$
+                          required:
+                            - resource-id
+                            - tag
+              - required:
+                  - vtag
+          network-map:
+            type: object
+            additionalProperties: false
+            x-patternProperties:
+              ^[0-9a-zA-Z-:@_.]{1,64}$:
+                type: object
+                properties:
+                  ipv4:
+                    type: array
+                    items:
+                      type: string
+                      pattern: (([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|(\/(([12]?[0-9])|(3[0-2]))$))){4}
+                  ipv6:
+                    type: array
+                    items:
+                      type: string
+                      pattern: ((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))\/(([1-5]?[0-9])|(6[0-4]))
+        required:
+          - network-map
+  - allOf:
+      - type: object
+        properties:
+          meta:
+            type: object
+            additionalProperties: true
+        additionalProperties: true
+      - properties:
+          meta:
+            allOf:
+              - allOf:
+                  - type: object
+                    additionalProperties: true
+                  - properties:
+                      vtag:
+                        type: object
+                        properties:
+                          resource-id:
+                            type: string
+                            pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                          tag:
+                            type: string
+                            pattern: ^[!-~]+$
+                        required:
+                          - resource-id
+                          - tag
+                      dependent-vtags:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            resource-id:
+                              type: string
+                              pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                            tag:
+                              type: string
+                              pattern: ^[!-~]+$
+                          required:
+                            - resource-id
+                            - tag
+              - properties:
+                  dependent-vtags:
+                    minItems: 1
+                    maxItems: 1
+                  cost-type:
+                    type: object
+                    properties:
+                      cost-mode:
+                        type: string
+                        enum:
+                          - numerical
+                          - ordinal
+                      cost-metric:
+                        anyOf:
+                          - type: string
+                            pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+                          - enum:
+                              - routingcost
+                              - delay-ow
+                              - delay-rt
+                              - delay-variation
+                              - hopcount
+                              - lossrate
+                              - tput
+                              - bw-residual
+                              - bw-maxres
+                    required:
+                      - cost-mode
+                      - cost-metric
+                required:
+                  - dependent-vtags
+                  - cost-type
+          cost-map:
+            type: object
+            additionalProperties: false
+            x-patternProperties:
+              ^[0-9a-zA-Z-:@_.]{1,64}$:
+                type: object
+                patternProperties:
+                  ^[0-9a-zA-Z-:@_.]{1,64}$:
+                    anyOf:
+                      - type: string
+                      - type: number
+                      - type: array
+                      - type: boolean
+                      - type: 'null'
+                      - type: object
+                        additionalProperties: true
+                additionalProperties: false
+        required:
+          - meta
+          - cost-map
+  - type: object
+    properties:
+      pids:
+        type: array
+        items:
+          type: string
+          pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+      address-types:
+        type: array
+        items:
+          type: string
+          enum:
+            - ipv4
+            - ipv6
+    required:
+      - pids
+    additionalProperties: true
+  - type: object
+    properties:
+      cost-type:
+        type: object
+        properties:
+          cost-mode:
+            type: string
+            enum:
+              - numerical
+              - ordinal
+          cost-metric:
+            anyOf:
+              - type: string
+                pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+              - enum:
+                  - routingcost
+                  - delay-ow
+                  - delay-rt
+                  - delay-variation
+                  - hopcount
+                  - lossrate
+                  - tput
+                  - bw-residual
+                  - bw-maxres
+        required:
+          - cost-mode
+          - cost-metric
+      constraints:
+        type: array
+        items:
+          type: string
+      pids:
+        type: object
+        properties:
+          srcs:
+            type: array
+            items:
+              type: string
+              pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+          dsts:
+            type: array
+            items:
+              type: string
+              pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+        required:
+          - srcs
+          - dsts
+        additionalProperties: true
+    required:
+      - cost-type
+    additionalProperties: true
+  - type: object
+    properties:
+      properties:
+        type: array
+        items:
+          oneOf:
+            - type: string
+              anyOf:
+                - pattern: ^[0-9a-zA-Z-:@_.]{1,64}\.pid$
+            - type: string
+              pattern: ^[0-9a-zA-Z-:_]{1,32}$
+        minItems: 1
+      endpoints:
+        type: array
+        items:
+          type: string
+          oneOf:
+            - pattern: ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}
+            - pattern: ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))
+        minItems: 1
+    required:
+      - properties
+      - endpoints
+    additionalProperties: true
+  - allOf:
+      - type: object
+        properties:
+          meta:
+            type: object
+            additionalProperties: true
+        additionalProperties: true
+      - properties:
+          meta:
+            allOf:
+              - type: object
+                additionalProperties: true
+              - properties:
+                  vtag:
+                    type: object
+                    properties:
+                      resource-id:
+                        type: string
+                        pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                      tag:
+                        type: string
+                        pattern: ^[!-~]+$
+                    required:
+                      - resource-id
+                      - tag
+                  dependent-vtags:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        resource-id:
+                          type: string
+                          pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                        tag:
+                          type: string
+                          pattern: ^[!-~]+$
+                      required:
+                        - resource-id
+                        - tag
+          endpoint-properties:
+            type: object
+            additionalProperties: false
+            x-patternProperties:
+              ^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}:
+                type: object
+                patternProperties:
+                  (^[0-9a-zA-Z-:@_.]{1,64}\.pid$)|(^[0-9a-zA-Z-:_]{1,32}$):
+                    anyOf:
+                      - type: string
+                      - type: number
+                      - type: array
+                      - type: boolean
+                      - type: 'null'
+                      - type: object
+                        additionalProperties: true
+                additionalProperties: false
+              ? ^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$
+              : type: object
+                patternProperties:
+                  (^[0-9a-zA-Z-:@_.]{1,64}\.pid$)|(^[0-9a-zA-Z-:_]{1,32}$):
+                    anyOf:
+                      - type: string
+                      - type: number
+                      - type: array
+                      - type: boolean
+                      - type: 'null'
+                      - type: object
+                        additionalProperties: true
+                additionalProperties: false
+        required:
+          - endpoint-properties
+  - type: object
+    properties:
+      cost-type:
+        type: object
+        properties:
+          cost-mode:
+            type: string
+            enum:
+              - numerical
+              - ordinal
+          cost-metric:
+            anyOf:
+              - type: string
+                pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+              - enum:
+                  - routingcost
+                  - delay-ow
+                  - delay-rt
+                  - delay-variation
+                  - hopcount
+                  - lossrate
+                  - tput
+                  - bw-residual
+                  - bw-maxres
+        required:
+          - cost-mode
+          - cost-metric
+      constraints:
+        type: array
+        items:
+          type: string
+      endpoints:
+        type: object
+        properties:
+          srcs:
+            type: array
+            items:
+              type: string
+              oneOf:
+                - pattern: ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}
+                - pattern: ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))
+          dsts:
+            type: array
+            items:
+              type: string
+              oneOf:
+                - pattern: ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}
+                - pattern: ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))
+        additionalProperties: true
+    required:
+      - cost-type
+      - endpoints
+    additionalProperties: true
+  - allOf:
+      - type: object
+        properties:
+          meta:
+            type: object
+            additionalProperties: true
+        additionalProperties: true
+      - properties:
+          meta:
+            allOf:
+              - allOf:
+                  - type: object
+                    additionalProperties: true
+                  - properties:
+                      vtag:
+                        type: object
+                        properties:
+                          resource-id:
+                            type: string
+                            pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                          tag:
+                            type: string
+                            pattern: ^[!-~]+$
+                        required:
+                          - resource-id
+                          - tag
+                      dependent-vtags:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            resource-id:
+                              type: string
+                              pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                            tag:
+                              type: string
+                              pattern: ^[!-~]+$
+                          required:
+                            - resource-id
+                            - tag
+              - properties:
+                  cost-type:
+                    type: object
+                    properties:
+                      cost-mode:
+                        type: string
+                        enum:
+                          - numerical
+                          - ordinal
+                      cost-metric:
+                        anyOf:
+                          - type: string
+                            pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+                          - enum:
+                              - routingcost
+                              - delay-ow
+                              - delay-rt
+                              - delay-variation
+                              - hopcount
+                              - lossrate
+                              - tput
+                              - bw-residual
+                              - bw-maxres
+                    required:
+                      - cost-mode
+                      - cost-metric
+                required:
+                  - cost-type
+          endpoint-cost-map:
+            type: object
+            additionalProperties: false
+            x-patternProperties:
+              ^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}:
+                type: object
+                patternProperties:
+                  ^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}:
+                    anyOf:
+                      - type: string
+                      - type: number
+                      - type: array
+                      - type: boolean
+                      - type: 'null'
+                      - type: object
+                        additionalProperties: true
+                  ? ^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$
+                  : anyOf:
+                      - type: string
+                      - type: number
+                      - type: array
+                      - type: boolean
+                      - type: 'null'
+                      - type: object
+                        additionalProperties: true
+                additionalProperties: false
+              ? ^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$
+              : type: object
+                patternProperties:
+                  ^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}:
+                    anyOf:
+                      - type: string
+                      - type: number
+                      - type: array
+                      - type: boolean
+                      - type: 'null'
+                      - type: object
+                        additionalProperties: true
+                  ? ^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$
+                  : anyOf:
+                      - type: string
+                      - type: number
+                      - type: array
+                      - type: boolean
+                      - type: 'null'
+                      - type: object
+                        additionalProperties: true
+                additionalProperties: false
+        required:
+          - meta
+          - endpoint-cost-map
+definitions:
+  ResponseMeta:
+    type: object
+    additionalProperties: true
+  ResponseEntityBase:
+    type: object
+    properties:
+      meta:
+        type: object
+        additionalProperties: true
+    additionalProperties: true
+  MediaType:
+    type: string
+    pattern: "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\\
+      /([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"\
+      (?:[^\"\\\\]|\\.)*\"))*)$"
+  URI:
+    type: string
+    pattern: ^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?$
+  PIDName:
+    type: string
+    pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+  ResourceID:
+    type: string
+    pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+  VersionTag:
+    type: object
+    properties:
+      resource-id:
+        type: string
+        pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+      tag:
+        type: string
+        pattern: ^[!-~]+$
+    required:
+      - resource-id
+      - tag
+  TypedEndpointAddr:
+    type: string
+    oneOf:
+      - pattern: ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}
+      - pattern: ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))
+  AddressType:
+    type: string
+    enum:
+      - ipv4
+      - ipv6
+  IPv4EndpointPrefix:
+    type: string
+    pattern: (([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|(\/(([12]?[0-9])|(3[0-2]))$))){4}
+  IPv6EndpointPrefix:
+    type: string
+    pattern: ((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))\/(([1-5]?[0-9])|(6[0-4]))
+  EndpointAddrGroup:
+    type: object
+    properties:
+      ipv4:
+        type: array
+        items:
+          type: string
+          pattern: (([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|(\/(([12]?[0-9])|(3[0-2]))$))){4}
+      ipv6:
+        type: array
+        items:
+          type: string
+          pattern: ((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))\/(([1-5]?[0-9])|(6[0-4]))
+  CostMode:
+    type: string
+    enum:
+      - numerical
+      - ordinal
+  CostMetric:
+    anyOf:
+      - type: string
+        pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+      - enum:
+          - routingcost
+          - delay-ow
+          - delay-rt
+          - delay-variation
+          - hopcount
+          - lossrate
+          - tput
+          - bw-residual
+          - bw-maxres
+  CostType:
+    type: object
+    properties:
+      cost-mode:
+        type: string
+        enum:
+          - numerical
+          - ordinal
+      cost-metric:
+        anyOf:
+          - type: string
+            pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+          - enum:
+              - routingcost
+              - delay-ow
+              - delay-rt
+              - delay-variation
+              - hopcount
+              - lossrate
+              - tput
+              - bw-residual
+              - bw-maxres
+    required:
+      - cost-mode
+      - cost-metric
+  ResourceSpecificEndpointProperty:
+    type: string
+    anyOf:
+      - pattern: ^[0-9a-zA-Z-:@_.]{1,64}\.pid$
+  GlobalEndpointProperty:
+    type: string
+    pattern: ^[0-9a-zA-Z-:_]{1,32}$
+  EndpointPropertyType:
+    oneOf:
+      - type: string
+        anyOf:
+          - pattern: ^[0-9a-zA-Z-:@_.]{1,64}\.pid$
+      - type: string
+        pattern: ^[0-9a-zA-Z-:_]{1,32}$
+  IRDMetaCostTypes:
+    type: object
+    additionalProperties: false
+    x-patternProperties:
+      ^.*$:
+        type: object
+        properties:
+          cost-mode:
+            type: string
+            enum:
+              - numerical
+              - ordinal
+          cost-metric:
+            anyOf:
+              - type: string
+                pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+              - enum:
+                  - routingcost
+                  - delay-ow
+                  - delay-rt
+                  - delay-variation
+                  - hopcount
+                  - lossrate
+                  - tput
+                  - bw-residual
+                  - bw-maxres
+        required:
+          - cost-mode
+          - cost-metric
+  Capabilities:
+    type: object
+    additionalProperties: true
+  IRDResourceEntry:
+    type: object
+    properties:
+      uri:
+        type: string
+        pattern: ^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?$
+      media-type:
+        type: string
+        pattern: "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\\
+          /([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"\
+          (?:[^\"\\\\]|\\.)*\"))*)$"
+      accepts:
+        allOf:
+          - type: string
+            pattern: "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\\
+              /([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"\
+              (?:[^\"\\\\]|\\.)*\"))*)$"
+          - default: null
+      capabilities:
+        type: object
+        additionalProperties: true
+      uses:
+        type: array
+        items:
+          type: string
+          pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+    required:
+      - uri
+      - media-type
+    allOf:
+      - oneOf:
+          - allOf:
+              - properties:
+                  media-type:
+                    enum:
+                      - application/alto-costmap+json
+                  accepts:
+                    enum:
+                      - null
+              - properties:
+                  capabilities:
+                    type: object
+                    properties:
+                      cost-type-names:
+                        type: array
+                        items:
+                          type: string
+                        minItems: 1
+                        maxItems: 1
+                    required:
+                      - cost-type-names
+                    additionalProperties: true
+                required:
+                  - uri
+                  - media-type
+                  - capabilities
+          - allOf:
+              - not:
+                  properties:
+                    media-type:
+                      enum:
+                        - application/alto-costmap+json
+                    accepts:
+                      enum:
+                        - null
+      - oneOf:
+          - allOf:
+              - properties:
+                  media-type:
+                    enum:
+                      - application/alto-costmap+json
+                  accepts:
+                    enum:
+                      - application/alto-costmapfilter+json
+              - properties:
+                  capabilities:
+                    type: object
+                    properties:
+                      cost-type-names:
+                        type: array
+                        items:
+                          type: string
+                        minItems: 1
+                      cost-constraints:
+                        type: boolean
+                        default: false
+                    additionalProperties: true
+                    x-require:
+                      - cost-type-names
+                required:
+                  - uri
+                  - media-type
+                  - capabilities
+          - allOf:
+              - not:
+                  properties:
+                    media-type:
+                      enum:
+                        - application/alto-costmap+json
+                    accepts:
+                      enum:
+                        - application/alto-costmapfilter+json
+      - oneOf:
+          - allOf:
+              - properties:
+                  media-type:
+                    enum:
+                      - application/alto-endpointprop+json
+                  accepts:
+                    enum:
+                      - application/alto-endpointpropparams+json
+              - properties:
+                  capabilities:
+                    type: object
+                    properties:
+                      prop-types:
+                        type: array
+                        items:
+                          oneOf:
+                            - type: string
+                              anyOf:
+                                - pattern: ^[0-9a-zA-Z-:@_.]{1,64}\.pid$
+                            - type: string
+                              pattern: ^[0-9a-zA-Z-:_]{1,32}$
+                        minItems: 1
+                    required:
+                      - prop-types
+                    additionalProperties: true
+                required:
+                  - uri
+                  - media-type
+                  - capabilities
+          - allOf:
+              - not:
+                  properties:
+                    media-type:
+                      enum:
+                        - application/alto-endpointprop+json
+                    accepts:
+                      enum:
+                        - application/alto-endpointpropparams+json
+      - oneOf:
+          - allOf:
+              - properties:
+                  media-type:
+                    enum:
+                      - application/alto-endpointcost+json
+                  accepts:
+                    enum:
+                      - application/alto-endpointcostparams+json
+              - properties:
+                  capabilities:
+                    type: object
+                    properties:
+                      cost-type-names:
+                        type: array
+                        items:
+                          type: string
+                        minItems: 1
+                      cost-constraints:
+                        type: boolean
+                        default: false
+                    additionalProperties: true
+                    x-require:
+                      - cost-type-names
+                required:
+                  - uri
+                  - media-type
+                  - capabilities
+          - allOf:
+              - not:
+                  properties:
+                    media-type:
+                      enum:
+                        - application/alto-endpointcost+json
+                    accepts:
+                      enum:
+                        - application/alto-endpointcostparams+json
+  IRDResourceEntries:
+    type: object
+    additionalProperties: false
+    x-patternProperties:
+      ^[0-9a-zA-Z-:@_.]{1,64}$:
+        type: object
+        properties:
+          uri:
+            type: string
+            pattern: ^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?$
+          media-type:
+            type: string
+            pattern: "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\\
+              /([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"\
+              (?:[^\"\\\\]|\\.)*\"))*)$"
+          accepts:
+            allOf:
+              - type: string
+                pattern: "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\\
+                  /([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"\
+                  (?:[^\"\\\\]|\\.)*\"))*)$"
+              - default: null
+          capabilities:
+            type: object
+            additionalProperties: true
+          uses:
+            type: array
+            items:
+              type: string
+              pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+        required:
+          - uri
+          - media-type
+        allOf:
+          - oneOf:
+              - allOf:
+                  - properties:
+                      media-type:
+                        enum:
+                          - application/alto-costmap+json
+                      accepts:
+                        enum:
+                          - null
+                  - properties:
+                      capabilities:
+                        type: object
+                        properties:
+                          cost-type-names:
+                            type: array
+                            items:
+                              type: string
+                            minItems: 1
+                            maxItems: 1
+                        required:
+                          - cost-type-names
+                        additionalProperties: true
+                    required:
+                      - uri
+                      - media-type
+                      - capabilities
+              - allOf:
+                  - not:
+                      properties:
+                        media-type:
+                          enum:
+                            - application/alto-costmap+json
+                        accepts:
+                          enum:
+                            - null
+          - oneOf:
+              - allOf:
+                  - properties:
+                      media-type:
+                        enum:
+                          - application/alto-costmap+json
+                      accepts:
+                        enum:
+                          - application/alto-costmapfilter+json
+                  - properties:
+                      capabilities:
+                        type: object
+                        properties:
+                          cost-type-names:
+                            type: array
+                            items:
+                              type: string
+                            minItems: 1
+                          cost-constraints:
+                            type: boolean
+                            default: false
+                        additionalProperties: true
+                        x-require:
+                          - cost-type-names
+                    required:
+                      - uri
+                      - media-type
+                      - capabilities
+              - allOf:
+                  - not:
+                      properties:
+                        media-type:
+                          enum:
+                            - application/alto-costmap+json
+                        accepts:
+                          enum:
+                            - application/alto-costmapfilter+json
+          - oneOf:
+              - allOf:
+                  - properties:
+                      media-type:
+                        enum:
+                          - application/alto-endpointprop+json
+                      accepts:
+                        enum:
+                          - application/alto-endpointpropparams+json
+                  - properties:
+                      capabilities:
+                        type: object
+                        properties:
+                          prop-types:
+                            type: array
+                            items:
+                              oneOf:
+                                - type: string
+                                  anyOf:
+                                    - pattern: ^[0-9a-zA-Z-:@_.]{1,64}\.pid$
+                                - type: string
+                                  pattern: ^[0-9a-zA-Z-:_]{1,32}$
+                            minItems: 1
+                        required:
+                          - prop-types
+                        additionalProperties: true
+                    required:
+                      - uri
+                      - media-type
+                      - capabilities
+              - allOf:
+                  - not:
+                      properties:
+                        media-type:
+                          enum:
+                            - application/alto-endpointprop+json
+                        accepts:
+                          enum:
+                            - application/alto-endpointpropparams+json
+          - oneOf:
+              - allOf:
+                  - properties:
+                      media-type:
+                        enum:
+                          - application/alto-endpointcost+json
+                      accepts:
+                        enum:
+                          - application/alto-endpointcostparams+json
+                  - properties:
+                      capabilities:
+                        type: object
+                        properties:
+                          cost-type-names:
+                            type: array
+                            items:
+                              type: string
+                            minItems: 1
+                          cost-constraints:
+                            type: boolean
+                            default: false
+                        additionalProperties: true
+                        x-require:
+                          - cost-type-names
+                    required:
+                      - uri
+                      - media-type
+                      - capabilities
+              - allOf:
+                  - not:
+                      properties:
+                        media-type:
+                          enum:
+                            - application/alto-endpointcost+json
+                        accepts:
+                          enum:
+                            - application/alto-endpointcostparams+json
+  InfoResourceDirectory:
+    allOf:
+      - type: object
+        properties:
+          meta:
+            type: object
+            additionalProperties: true
+        additionalProperties: true
+      - properties:
+          meta:
+            allOf:
+              - type: object
+                additionalProperties: true
+              - properties:
+                  cost-types:
+                    type: object
+                    additionalProperties: false
+                    x-patternProperties:
+                      ^.*$:
+                        type: object
+                        properties:
+                          cost-mode:
+                            type: string
+                            enum:
+                              - numerical
+                              - ordinal
+                          cost-metric:
+                            anyOf:
+                              - type: string
+                                pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+                              - enum:
+                                  - routingcost
+                                  - delay-ow
+                                  - delay-rt
+                                  - delay-variation
+                                  - hopcount
+                                  - lossrate
+                                  - tput
+                                  - bw-residual
+                                  - bw-maxres
+                        required:
+                          - cost-mode
+                          - cost-metric
+                  default-alto-network-map:
+                    type: string
+                    pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+          resources:
+            type: object
+            additionalProperties: false
+            x-patternProperties:
+              ^[0-9a-zA-Z-:@_.]{1,64}$:
+                type: object
+                properties:
+                  uri:
+                    type: string
+                    pattern: ^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?$
+                  media-type:
+                    type: string
+                    pattern: "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\\
+                      /([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"\
+                      (?:[^\"\\\\]|\\.)*\"))*)$"
+                  accepts:
+                    allOf:
+                      - type: string
+                        pattern: "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\\
+                          /([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"\
+                          (?:[^\"\\\\]|\\.)*\"))*)$"
+                      - default: null
+                  capabilities:
+                    type: object
+                    additionalProperties: true
+                  uses:
+                    type: array
+                    items:
+                      type: string
+                      pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                required:
+                  - uri
+                  - media-type
+                allOf:
+                  - oneOf:
+                      - allOf:
+                          - properties:
+                              media-type:
+                                enum:
+                                  - application/alto-costmap+json
+                              accepts:
+                                enum:
+                                  - null
+                          - properties:
+                              capabilities:
+                                type: object
+                                properties:
+                                  cost-type-names:
+                                    type: array
+                                    items:
+                                      type: string
+                                    minItems: 1
+                                    maxItems: 1
+                                required:
+                                  - cost-type-names
+                                additionalProperties: true
+                            required:
+                              - uri
+                              - media-type
+                              - capabilities
+                      - allOf:
+                          - not:
+                              properties:
+                                media-type:
+                                  enum:
+                                    - application/alto-costmap+json
+                                accepts:
+                                  enum:
+                                    - null
+                  - oneOf:
+                      - allOf:
+                          - properties:
+                              media-type:
+                                enum:
+                                  - application/alto-costmap+json
+                              accepts:
+                                enum:
+                                  - application/alto-costmapfilter+json
+                          - properties:
+                              capabilities:
+                                type: object
+                                properties:
+                                  cost-type-names:
+                                    type: array
+                                    items:
+                                      type: string
+                                    minItems: 1
+                                  cost-constraints:
+                                    type: boolean
+                                    default: false
+                                additionalProperties: true
+                                x-require:
+                                  - cost-type-names
+                            required:
+                              - uri
+                              - media-type
+                              - capabilities
+                      - allOf:
+                          - not:
+                              properties:
+                                media-type:
+                                  enum:
+                                    - application/alto-costmap+json
+                                accepts:
+                                  enum:
+                                    - application/alto-costmapfilter+json
+                  - oneOf:
+                      - allOf:
+                          - properties:
+                              media-type:
+                                enum:
+                                  - application/alto-endpointprop+json
+                              accepts:
+                                enum:
+                                  - application/alto-endpointpropparams+json
+                          - properties:
+                              capabilities:
+                                type: object
+                                properties:
+                                  prop-types:
+                                    type: array
+                                    items:
+                                      oneOf:
+                                        - type: string
+                                          anyOf:
+                                            - pattern: ^[0-9a-zA-Z-:@_.]{1,64}\.pid$
+                                        - type: string
+                                          pattern: ^[0-9a-zA-Z-:_]{1,32}$
+                                    minItems: 1
+                                required:
+                                  - prop-types
+                                additionalProperties: true
+                            required:
+                              - uri
+                              - media-type
+                              - capabilities
+                      - allOf:
+                          - not:
+                              properties:
+                                media-type:
+                                  enum:
+                                    - application/alto-endpointprop+json
+                                accepts:
+                                  enum:
+                                    - application/alto-endpointpropparams+json
+                  - oneOf:
+                      - allOf:
+                          - properties:
+                              media-type:
+                                enum:
+                                  - application/alto-endpointcost+json
+                              accepts:
+                                enum:
+                                  - application/alto-endpointcostparams+json
+                          - properties:
+                              capabilities:
+                                type: object
+                                properties:
+                                  cost-type-names:
+                                    type: array
+                                    items:
+                                      type: string
+                                    minItems: 1
+                                  cost-constraints:
+                                    type: boolean
+                                    default: false
+                                additionalProperties: true
+                                x-require:
+                                  - cost-type-names
+                            required:
+                              - uri
+                              - media-type
+                              - capabilities
+                      - allOf:
+                          - not:
+                              properties:
+                                media-type:
+                                  enum:
+                                    - application/alto-endpointcost+json
+                                accepts:
+                                  enum:
+                                    - application/alto-endpointcostparams+json
+        required:
+          - resources
+  ServiceResponseMeta:
+    allOf:
+      - type: object
+        additionalProperties: true
+      - properties:
+          vtag:
+            type: object
+            properties:
+              resource-id:
+                type: string
+                pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+              tag:
+                type: string
+                pattern: ^[!-~]+$
+            required:
+              - resource-id
+              - tag
+          dependent-vtags:
+            type: array
+            items:
+              type: object
+              properties:
+                resource-id:
+                  type: string
+                  pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                tag:
+                  type: string
+                  pattern: ^[!-~]+$
+              required:
+                - resource-id
+                - tag
+  InfoResourceNetworkMap:
+    allOf:
+      - type: object
+        properties:
+          meta:
+            type: object
+            additionalProperties: true
+        additionalProperties: true
+      - properties:
+          meta:
+            allOf:
+              - allOf:
+                  - type: object
+                    additionalProperties: true
+                  - properties:
+                      vtag:
+                        type: object
+                        properties:
+                          resource-id:
+                            type: string
+                            pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                          tag:
+                            type: string
+                            pattern: ^[!-~]+$
+                        required:
+                          - resource-id
+                          - tag
+                      dependent-vtags:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            resource-id:
+                              type: string
+                              pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                            tag:
+                              type: string
+                              pattern: ^[!-~]+$
+                          required:
+                            - resource-id
+                            - tag
+              - required:
+                  - vtag
+          network-map:
+            type: object
+            additionalProperties: false
+            x-patternProperties:
+              ^[0-9a-zA-Z-:@_.]{1,64}$:
+                type: object
+                properties:
+                  ipv4:
+                    type: array
+                    items:
+                      type: string
+                      pattern: (([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|(\/(([12]?[0-9])|(3[0-2]))$))){4}
+                  ipv6:
+                    type: array
+                    items:
+                      type: string
+                      pattern: ((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))\/(([1-5]?[0-9])|(6[0-4]))
+        required:
+          - network-map
+  NetworkMapData:
+    type: object
+    additionalProperties: false
+    x-patternProperties:
+      ^[0-9a-zA-Z-:@_.]{1,64}$:
+        type: object
+        properties:
+          ipv4:
+            type: array
+            items:
+              type: string
+              pattern: (([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|(\/(([12]?[0-9])|(3[0-2]))$))){4}
+          ipv6:
+            type: array
+            items:
+              type: string
+              pattern: ((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))\/(([1-5]?[0-9])|(6[0-4]))
+  CostMapCapabilities:
+    type: object
+    properties:
+      cost-type-names:
+        type: array
+        items:
+          type: string
+        minItems: 1
+        maxItems: 1
+    required:
+      - cost-type-names
+    additionalProperties: true
+  InfoResourceCostMap:
+    allOf:
+      - type: object
+        properties:
+          meta:
+            type: object
+            additionalProperties: true
+        additionalProperties: true
+      - properties:
+          meta:
+            allOf:
+              - allOf:
+                  - type: object
+                    additionalProperties: true
+                  - properties:
+                      vtag:
+                        type: object
+                        properties:
+                          resource-id:
+                            type: string
+                            pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                          tag:
+                            type: string
+                            pattern: ^[!-~]+$
+                        required:
+                          - resource-id
+                          - tag
+                      dependent-vtags:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            resource-id:
+                              type: string
+                              pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                            tag:
+                              type: string
+                              pattern: ^[!-~]+$
+                          required:
+                            - resource-id
+                            - tag
+              - properties:
+                  dependent-vtags:
+                    minItems: 1
+                    maxItems: 1
+                  cost-type:
+                    type: object
+                    properties:
+                      cost-mode:
+                        type: string
+                        enum:
+                          - numerical
+                          - ordinal
+                      cost-metric:
+                        anyOf:
+                          - type: string
+                            pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+                          - enum:
+                              - routingcost
+                              - delay-ow
+                              - delay-rt
+                              - delay-variation
+                              - hopcount
+                              - lossrate
+                              - tput
+                              - bw-residual
+                              - bw-maxres
+                    required:
+                      - cost-mode
+                      - cost-metric
+                required:
+                  - dependent-vtags
+                  - cost-type
+          cost-map:
+            type: object
+            additionalProperties: false
+            x-patternProperties:
+              ^[0-9a-zA-Z-:@_.]{1,64}$:
+                type: object
+                patternProperties:
+                  ^[0-9a-zA-Z-:@_.]{1,64}$:
+                    anyOf:
+                      - type: string
+                      - type: number
+                      - type: array
+                      - type: boolean
+                      - type: 'null'
+                      - type: object
+                        additionalProperties: true
+                additionalProperties: false
+        required:
+          - meta
+          - cost-map
+  CostMapData:
+    type: object
+    additionalProperties: false
+    x-patternProperties:
+      ^[0-9a-zA-Z-:@_.]{1,64}$:
+        type: object
+        patternProperties:
+          ^[0-9a-zA-Z-:@_.]{1,64}$:
+            anyOf:
+              - type: string
+              - type: number
+              - type: array
+              - type: boolean
+              - type: 'null'
+              - type: object
+                additionalProperties: true
+        additionalProperties: false
+  DstCosts:
+    type: object
+    additionalProperties: false
+    x-patternProperties:
+      ^[0-9a-zA-Z-:@_.]{1,64}$:
+        anyOf:
+          - type: string
+          - type: number
+          - type: array
+          - type: boolean
+          - type: 'null'
+          - type: object
+            additionalProperties: true
+  ReqFilteredNetworkMap:
+    type: object
+    properties:
+      pids:
+        type: array
+        items:
+          type: string
+          pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+      address-types:
+        type: array
+        items:
+          type: string
+          enum:
+            - ipv4
+            - ipv6
+    required:
+      - pids
+    additionalProperties: true
+  ReqFilteredCostMap:
+    type: object
+    properties:
+      cost-type:
+        type: object
+        properties:
+          cost-mode:
+            type: string
+            enum:
+              - numerical
+              - ordinal
+          cost-metric:
+            anyOf:
+              - type: string
+                pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+              - enum:
+                  - routingcost
+                  - delay-ow
+                  - delay-rt
+                  - delay-variation
+                  - hopcount
+                  - lossrate
+                  - tput
+                  - bw-residual
+                  - bw-maxres
+        required:
+          - cost-mode
+          - cost-metric
+      constraints:
+        type: array
+        items:
+          type: string
+      pids:
+        type: object
+        properties:
+          srcs:
+            type: array
+            items:
+              type: string
+              pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+          dsts:
+            type: array
+            items:
+              type: string
+              pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+        required:
+          - srcs
+          - dsts
+        additionalProperties: true
+    required:
+      - cost-type
+    additionalProperties: true
+  PIDFilter:
+    type: object
+    properties:
+      srcs:
+        type: array
+        items:
+          type: string
+          pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+      dsts:
+        type: array
+        items:
+          type: string
+          pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+    required:
+      - srcs
+      - dsts
+    additionalProperties: true
+  FilteredCostMapCapabilities:
+    type: object
+    properties:
+      cost-type-names:
+        type: array
+        items:
+          type: string
+        minItems: 1
+      cost-constraints:
+        type: boolean
+        default: false
+    additionalProperties: true
+    x-require:
+      - cost-type-names
+  ReqEndpointProp:
+    type: object
+    properties:
+      properties:
+        type: array
+        items:
+          oneOf:
+            - type: string
+              anyOf:
+                - pattern: ^[0-9a-zA-Z-:@_.]{1,64}\.pid$
+            - type: string
+              pattern: ^[0-9a-zA-Z-:_]{1,32}$
+        minItems: 1
+      endpoints:
+        type: array
+        items:
+          type: string
+          oneOf:
+            - pattern: ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}
+            - pattern: ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))
+        minItems: 1
+    required:
+      - properties
+      - endpoints
+    additionalProperties: true
+  EndpointPropertyCapabilities:
+    type: object
+    properties:
+      prop-types:
+        type: array
+        items:
+          oneOf:
+            - type: string
+              anyOf:
+                - pattern: ^[0-9a-zA-Z-:@_.]{1,64}\.pid$
+            - type: string
+              pattern: ^[0-9a-zA-Z-:_]{1,32}$
+        minItems: 1
+    required:
+      - prop-types
+    additionalProperties: true
+  InfoResourceEndpointProperties:
+    allOf:
+      - type: object
+        properties:
+          meta:
+            type: object
+            additionalProperties: true
+        additionalProperties: true
+      - properties:
+          meta:
+            allOf:
+              - type: object
+                additionalProperties: true
+              - properties:
+                  vtag:
+                    type: object
+                    properties:
+                      resource-id:
+                        type: string
+                        pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                      tag:
+                        type: string
+                        pattern: ^[!-~]+$
+                    required:
+                      - resource-id
+                      - tag
+                  dependent-vtags:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        resource-id:
+                          type: string
+                          pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                        tag:
+                          type: string
+                          pattern: ^[!-~]+$
+                      required:
+                        - resource-id
+                        - tag
+          endpoint-properties:
+            type: object
+            additionalProperties: false
+            x-patternProperties:
+              ^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}:
+                type: object
+                patternProperties:
+                  (^[0-9a-zA-Z-:@_.]{1,64}\.pid$)|(^[0-9a-zA-Z-:_]{1,32}$):
+                    anyOf:
+                      - type: string
+                      - type: number
+                      - type: array
+                      - type: boolean
+                      - type: 'null'
+                      - type: object
+                        additionalProperties: true
+                additionalProperties: false
+              ? ^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$
+              : type: object
+                patternProperties:
+                  (^[0-9a-zA-Z-:@_.]{1,64}\.pid$)|(^[0-9a-zA-Z-:_]{1,32}$):
+                    anyOf:
+                      - type: string
+                      - type: number
+                      - type: array
+                      - type: boolean
+                      - type: 'null'
+                      - type: object
+                        additionalProperties: true
+                additionalProperties: false
+        required:
+          - endpoint-properties
+  EndpointPropertyMapData:
+    type: object
+    additionalProperties: false
+    x-patternProperties:
+      ^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}:
+        type: object
+        patternProperties:
+          (^[0-9a-zA-Z-:@_.]{1,64}\.pid$)|(^[0-9a-zA-Z-:_]{1,32}$):
+            anyOf:
+              - type: string
+              - type: number
+              - type: array
+              - type: boolean
+              - type: 'null'
+              - type: object
+                additionalProperties: true
+        additionalProperties: false
+      ? ^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$
+      : type: object
+        patternProperties:
+          (^[0-9a-zA-Z-:@_.]{1,64}\.pid$)|(^[0-9a-zA-Z-:_]{1,32}$):
+            anyOf:
+              - type: string
+              - type: number
+              - type: array
+              - type: boolean
+              - type: 'null'
+              - type: object
+                additionalProperties: true
+        additionalProperties: false
+  EndpointProps:
+    type: object
+    additionalProperties: false
+    x-patternProperties:
+      (^[0-9a-zA-Z-:@_.]{1,64}\.pid$)|(^[0-9a-zA-Z-:_]{1,32}$):
+        anyOf:
+          - type: string
+          - type: number
+          - type: array
+          - type: boolean
+          - type: 'null'
+          - type: object
+            additionalProperties: true
+  ReqEndpointCostMap:
+    type: object
+    properties:
+      cost-type:
+        type: object
+        properties:
+          cost-mode:
+            type: string
+            enum:
+              - numerical
+              - ordinal
+          cost-metric:
+            anyOf:
+              - type: string
+                pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+              - enum:
+                  - routingcost
+                  - delay-ow
+                  - delay-rt
+                  - delay-variation
+                  - hopcount
+                  - lossrate
+                  - tput
+                  - bw-residual
+                  - bw-maxres
+        required:
+          - cost-mode
+          - cost-metric
+      constraints:
+        type: array
+        items:
+          type: string
+      endpoints:
+        type: object
+        properties:
+          srcs:
+            type: array
+            items:
+              type: string
+              oneOf:
+                - pattern: ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}
+                - pattern: ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))
+          dsts:
+            type: array
+            items:
+              type: string
+              oneOf:
+                - pattern: ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}
+                - pattern: ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))
+        additionalProperties: true
+    required:
+      - cost-type
+      - endpoints
+    additionalProperties: true
+  EndpointFilter:
+    type: object
+    properties:
+      srcs:
+        type: array
+        items:
+          type: string
+          oneOf:
+            - pattern: ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}
+            - pattern: ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))
+      dsts:
+        type: array
+        items:
+          type: string
+          oneOf:
+            - pattern: ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}
+            - pattern: ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))
+    additionalProperties: true
+  InfoResourceEndpointCostMap:
+    allOf:
+      - type: object
+        properties:
+          meta:
+            type: object
+            additionalProperties: true
+        additionalProperties: true
+      - properties:
+          meta:
+            allOf:
+              - allOf:
+                  - type: object
+                    additionalProperties: true
+                  - properties:
+                      vtag:
+                        type: object
+                        properties:
+                          resource-id:
+                            type: string
+                            pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                          tag:
+                            type: string
+                            pattern: ^[!-~]+$
+                        required:
+                          - resource-id
+                          - tag
+                      dependent-vtags:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            resource-id:
+                              type: string
+                              pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                            tag:
+                              type: string
+                              pattern: ^[!-~]+$
+                          required:
+                            - resource-id
+                            - tag
+              - properties:
+                  cost-type:
+                    type: object
+                    properties:
+                      cost-mode:
+                        type: string
+                        enum:
+                          - numerical
+                          - ordinal
+                      cost-metric:
+                        anyOf:
+                          - type: string
+                            pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+                          - enum:
+                              - routingcost
+                              - delay-ow
+                              - delay-rt
+                              - delay-variation
+                              - hopcount
+                              - lossrate
+                              - tput
+                              - bw-residual
+                              - bw-maxres
+                    required:
+                      - cost-mode
+                      - cost-metric
+                required:
+                  - cost-type
+          endpoint-cost-map:
+            type: object
+            additionalProperties: false
+            x-patternProperties:
+              ^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}:
+                type: object
+                patternProperties:
+                  ^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}:
+                    anyOf:
+                      - type: string
+                      - type: number
+                      - type: array
+                      - type: boolean
+                      - type: 'null'
+                      - type: object
+                        additionalProperties: true
+                  ? ^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$
+                  : anyOf:
+                      - type: string
+                      - type: number
+                      - type: array
+                      - type: boolean
+                      - type: 'null'
+                      - type: object
+                        additionalProperties: true
+                additionalProperties: false
+              ? ^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$
+              : type: object
+                patternProperties:
+                  ^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}:
+                    anyOf:
+                      - type: string
+                      - type: number
+                      - type: array
+                      - type: boolean
+                      - type: 'null'
+                      - type: object
+                        additionalProperties: true
+                  ? ^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$
+                  : anyOf:
+                      - type: string
+                      - type: number
+                      - type: array
+                      - type: boolean
+                      - type: 'null'
+                      - type: object
+                        additionalProperties: true
+                additionalProperties: false
+        required:
+          - meta
+          - endpoint-cost-map
+  EndpointCostMapData:
+    type: object
+    additionalProperties: false
+    x-patternProperties:
+      ^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}:
+        type: object
+        patternProperties:
+          ^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}:
+            anyOf:
+              - type: string
+              - type: number
+              - type: array
+              - type: boolean
+              - type: 'null'
+              - type: object
+                additionalProperties: true
+          ? ^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$
+          : anyOf:
+              - type: string
+              - type: number
+              - type: array
+              - type: boolean
+              - type: 'null'
+              - type: object
+                additionalProperties: true
+        additionalProperties: false
+      ? ^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$
+      : type: object
+        patternProperties:
+          ^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}:
+            anyOf:
+              - type: string
+              - type: number
+              - type: array
+              - type: boolean
+              - type: 'null'
+              - type: object
+                additionalProperties: true
+          ? ^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$
+          : anyOf:
+              - type: string
+              - type: number
+              - type: array
+              - type: boolean
+              - type: 'null'
+              - type: object
+                additionalProperties: true
+        additionalProperties: false
+  EndpointDstCosts:
+    type: object
+    additionalProperties: false
+    x-patternProperties:
+      ^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}:
+        anyOf:
+          - type: string
+          - type: number
+          - type: array
+          - type: boolean
+          - type: 'null'
+          - type: object
+            additionalProperties: true
+      ? ^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$
+      : anyOf:
+          - type: string
+          - type: number
+          - type: array
+          - type: boolean
+          - type: 'null'
+          - type: object
+            additionalProperties: true

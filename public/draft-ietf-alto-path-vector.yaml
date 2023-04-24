@@ -1,0 +1,27 @@
+$schema: http://json-schema.org/draft-07/schema#
+$id: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/draft-ietf-alto-path-vector.yaml
+definitions:
+  PVReqFilteredCostMap:
+    allOf:
+      - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/ReqFilteredCostMap
+      - properties:
+          ane-property-names:
+            type: array
+            items:
+              $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/draft-ietf-alto-unified-props-new.yaml#/definitions/EntityPropertyName
+  PVFilteredCostMapCapabilities:
+    allOf:
+      - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/FilteredCostMapCapabilities
+      - properties:
+          ane-property-names:
+            type: array
+            items:
+              $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/draft-ietf-alto-unified-props-new.yaml#/definitions/EntityPropertyName
+  PVReqEndpointCostMap:
+    allOf:
+      - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/ReqEndpointCostMap
+      - properties:
+          ane-property-names:
+            type: array
+            items:
+              $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/draft-ietf-alto-unified-props-new.yaml#/definitions/EntityPropertyName

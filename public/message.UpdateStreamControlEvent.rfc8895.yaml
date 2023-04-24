@@ -1,0 +1,4 @@
+$schema: http://json-schema.org/draft-07/schema#
+$id: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/message.UpdateStreamControlEvent.rfc8895.yaml
+allOf:
+  - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc8895.yaml#/definitions/UpdateStreamControlEvent

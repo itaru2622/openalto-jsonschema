@@ -1,0 +1,9 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/message.UpdateStreamReq.rfc8895.json",
+  "allOf": [
+    {
+      "$ref": "https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc8895.json#/definitions/UpdateStreamReq"
+    }
+  ]
+}

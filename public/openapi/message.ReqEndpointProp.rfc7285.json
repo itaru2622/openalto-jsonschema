@@ -1,0 +1,49 @@
+{
+  "allOf": [
+    {
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string",
+                "anyOf": [
+                  {
+                    "pattern": "^[0-9a-zA-Z-:@_.]{1,64}\\.pid$"
+                  }
+                ]
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9a-zA-Z-:_]{1,32}$"
+              }
+            ]
+          },
+          "minItems": 1
+        },
+        "endpoints": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "oneOf": [
+              {
+                "pattern": "ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\.|$)){4}"
+              },
+              {
+                "pattern": "ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))"
+              }
+            ]
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "properties",
+        "endpoints"
+      ],
+      "additionalProperties": true
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+$schema: http://json-schema.org/draft-07/schema#
+$id: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc8895.yaml
+definitions:
+  InfoResourceDirectory:
+    allOf:
+      - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/InfoResourceDirectory
+      - properties:
+          resources:
+            $ref: '#/definitions/IRDResourceEntries'
+  IRDResourceEntries:
+    allOf:
+      - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/IRDResourceEntries
+      - patternProperties:
+          ^[0-9a-zA-Z-:@_.]{1,64}$:
+            $ref: '#/definitions/IRDResourceEntry'
+  IRDResourceEntry:
+    allOf:
+      - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/IRDResourceEntry
+      - if:
+          properties:
+            media-type:
+              const: text/event-stream
+            accepts:
+              const: application/alto-updatestreamparams+json
+        then:
+          properties:
+            capabilities:
+              $ref: '#/definitions/UpdateStreamCapabilities'
+          required:
+            - uri
+            - media-type
+            - capabilities
+  SubstreamID:
+    $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/ResourceID
+  UpdateStreamControlEvent:
+    type: object
+    properties:
+      control-uri:
+        $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/URI
+      started:
+        type: array
+        items:
+          $ref: '#/definitions/SubstreamID'
+        minItems: 1
+      stopped:
+        type: array
+        items:
+          $ref: '#/definitions/SubstreamID'
+        minItems: 1
+      description:
+        type: string
+  UpdateStreamCapabilities:
+    type: object
+    properties:
+      incremental-change-media-types:
+        $ref: '#/definitions/IncrementalUpdateMediaTypes'
+      supported-stream-control:
+        type: boolean
+    required:
+      - incremental-change-media-types
+      - supported-stream-control
+    additionalProperties: true
+  IncrementalUpdateMediaTypes:
+    type: object
+    patternProperties:
+      ^[0-9a-zA-Z-:@_.]{1,64}$:
+        type: string
+    additionalProperties: false
+  UpdateStreamReq:
+    type: object
+    properties:
+      add:
+        $ref: '#/definitions/AddUpdatesReq'
+      remove:
+        type: array
+        items:
+          $ref: '#/definitions/SubstreamID'
+    additionalProperties: true
+  AddUpdatesReq:
+    type: object
+    patternProperties:
+      ^[0-9a-zA-Z-:@_.]{1,64}$:
+        $ref: '#/definitions/AddUpdateReq'
+    additionalProperties: false
+  AddUpdateReq:
+    type: object
+    properties:
+      resource-id:
+        $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/ResourceID
+      tag:
+        type: string
+        pattern: ^[!-~]+$
+      incremental-changes:
+        type: boolean
+      input:
+        type: object
+        additionalProperties: true
+    required:
+      - resource-id
+    additionalProperties: true

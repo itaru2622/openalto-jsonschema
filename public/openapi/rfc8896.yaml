@@ -1,0 +1,2038 @@
+definitions:
+  InfoResourceDirectory:
+    allOf:
+      - allOf:
+          - type: object
+            properties:
+              meta:
+                type: object
+                additionalProperties: true
+            additionalProperties: true
+          - properties:
+              meta:
+                allOf:
+                  - type: object
+                    additionalProperties: true
+                  - properties:
+                      cost-types:
+                        type: object
+                        patternProperties:
+                          ^.*$:
+                            type: object
+                            properties:
+                              cost-mode:
+                                type: string
+                                enum:
+                                  - numerical
+                                  - ordinal
+                              cost-metric:
+                                anyOf:
+                                  - type: string
+                                    pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+                                  - enum:
+                                      - routingcost
+                                      - delay-ow
+                                      - delay-rt
+                                      - delay-variation
+                                      - hopcount
+                                      - lossrate
+                                      - tput
+                                      - bw-residual
+                                      - bw-maxres
+                            required:
+                              - cost-mode
+                              - cost-metric
+                        additionalProperties: false
+                      default-alto-network-map:
+                        type: string
+                        pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+              resources:
+                type: object
+                patternProperties:
+                  ^[0-9a-zA-Z-:@_.]{1,64}$:
+                    type: object
+                    properties:
+                      uri:
+                        type: string
+                        pattern: ^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?$
+                      media-type:
+                        type: string
+                        pattern: "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\\
+                          /([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"\
+                          (?:[^\"\\\\]|\\.)*\"))*)$"
+                      accepts:
+                        allOf:
+                          - type: string
+                            pattern: "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\\
+                              /([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"\
+                              (?:[^\"\\\\]|\\.)*\"))*)$"
+                          - default: null
+                      capabilities:
+                        type: object
+                        additionalProperties: true
+                      uses:
+                        type: array
+                        items:
+                          type: string
+                          pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                    required:
+                      - uri
+                      - media-type
+                    allOf:
+                      - if:
+                          properties:
+                            media-type:
+                              const: application/alto-costmap+json
+                            accepts:
+                              const: null
+                        then:
+                          properties:
+                            capabilities:
+                              type: object
+                              properties:
+                                cost-type-names:
+                                  type: array
+                                  items:
+                                    type: string
+                                  minItems: 1
+                                  maxItems: 1
+                              required:
+                                - cost-type-names
+                              additionalProperties: true
+                          required:
+                            - uri
+                            - media-type
+                            - capabilities
+                      - if:
+                          properties:
+                            media-type:
+                              const: application/alto-costmap+json
+                            accepts:
+                              const: application/alto-costmapfilter+json
+                        then:
+                          properties:
+                            capabilities:
+                              type: object
+                              properties:
+                                cost-type-names:
+                                  type: array
+                                  items:
+                                    type: string
+                                  minItems: 1
+                                cost-constraints:
+                                  type: boolean
+                                  default: false
+                              require:
+                                - cost-type-names
+                              additionalProperties: true
+                          required:
+                            - uri
+                            - media-type
+                            - capabilities
+                      - if:
+                          properties:
+                            media-type:
+                              const: application/alto-endpointprop+json
+                            accepts:
+                              const: application/alto-endpointpropparams+json
+                        then:
+                          properties:
+                            capabilities:
+                              type: object
+                              properties:
+                                prop-types:
+                                  type: array
+                                  items:
+                                    oneOf:
+                                      - type: string
+                                        anyOf:
+                                          - pattern: ^[0-9a-zA-Z-:@_.]{1,64}\.pid$
+                                      - type: string
+                                        pattern: ^[0-9a-zA-Z-:_]{1,32}$
+                                  minItems: 1
+                              required:
+                                - prop-types
+                              additionalProperties: true
+                          required:
+                            - uri
+                            - media-type
+                            - capabilities
+                      - if:
+                          properties:
+                            media-type:
+                              const: application/alto-endpointcost+json
+                            accepts:
+                              const: application/alto-endpointcostparams+json
+                        then:
+                          properties:
+                            capabilities:
+                              type: object
+                              properties:
+                                cost-type-names:
+                                  type: array
+                                  items:
+                                    type: string
+                                  minItems: 1
+                                cost-constraints:
+                                  type: boolean
+                                  default: false
+                              require:
+                                - cost-type-names
+                              additionalProperties: true
+                          required:
+                            - uri
+                            - media-type
+                            - capabilities
+                additionalProperties: false
+            required:
+              - resources
+      - properties:
+          resources:
+            allOf:
+              - type: object
+                patternProperties:
+                  ^[0-9a-zA-Z-:@_.]{1,64}$:
+                    type: object
+                    properties:
+                      uri:
+                        type: string
+                        pattern: ^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?$
+                      media-type:
+                        type: string
+                        pattern: "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\\
+                          /([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"\
+                          (?:[^\"\\\\]|\\.)*\"))*)$"
+                      accepts:
+                        allOf:
+                          - type: string
+                            pattern: "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\\
+                              /([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"\
+                              (?:[^\"\\\\]|\\.)*\"))*)$"
+                          - default: null
+                      capabilities:
+                        type: object
+                        additionalProperties: true
+                      uses:
+                        type: array
+                        items:
+                          type: string
+                          pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                    required:
+                      - uri
+                      - media-type
+                    allOf:
+                      - if:
+                          properties:
+                            media-type:
+                              const: application/alto-costmap+json
+                            accepts:
+                              const: null
+                        then:
+                          properties:
+                            capabilities:
+                              type: object
+                              properties:
+                                cost-type-names:
+                                  type: array
+                                  items:
+                                    type: string
+                                  minItems: 1
+                                  maxItems: 1
+                              required:
+                                - cost-type-names
+                              additionalProperties: true
+                          required:
+                            - uri
+                            - media-type
+                            - capabilities
+                      - if:
+                          properties:
+                            media-type:
+                              const: application/alto-costmap+json
+                            accepts:
+                              const: application/alto-costmapfilter+json
+                        then:
+                          properties:
+                            capabilities:
+                              type: object
+                              properties:
+                                cost-type-names:
+                                  type: array
+                                  items:
+                                    type: string
+                                  minItems: 1
+                                cost-constraints:
+                                  type: boolean
+                                  default: false
+                              require:
+                                - cost-type-names
+                              additionalProperties: true
+                          required:
+                            - uri
+                            - media-type
+                            - capabilities
+                      - if:
+                          properties:
+                            media-type:
+                              const: application/alto-endpointprop+json
+                            accepts:
+                              const: application/alto-endpointpropparams+json
+                        then:
+                          properties:
+                            capabilities:
+                              type: object
+                              properties:
+                                prop-types:
+                                  type: array
+                                  items:
+                                    oneOf:
+                                      - type: string
+                                        anyOf:
+                                          - pattern: ^[0-9a-zA-Z-:@_.]{1,64}\.pid$
+                                      - type: string
+                                        pattern: ^[0-9a-zA-Z-:_]{1,32}$
+                                  minItems: 1
+                              required:
+                                - prop-types
+                              additionalProperties: true
+                          required:
+                            - uri
+                            - media-type
+                            - capabilities
+                      - if:
+                          properties:
+                            media-type:
+                              const: application/alto-endpointcost+json
+                            accepts:
+                              const: application/alto-endpointcostparams+json
+                        then:
+                          properties:
+                            capabilities:
+                              type: object
+                              properties:
+                                cost-type-names:
+                                  type: array
+                                  items:
+                                    type: string
+                                  minItems: 1
+                                cost-constraints:
+                                  type: boolean
+                                  default: false
+                              require:
+                                - cost-type-names
+                              additionalProperties: true
+                          required:
+                            - uri
+                            - media-type
+                            - capabilities
+                additionalProperties: false
+              - patternProperties:
+                  ^[0-9a-zA-Z-:@_.]{1,64}$:
+                    allOf:
+                      - type: object
+                        properties:
+                          uri:
+                            type: string
+                            pattern: ^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?$
+                          media-type:
+                            type: string
+                            pattern: "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\\
+                              /([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"\
+                              (?:[^\"\\\\]|\\.)*\"))*)$"
+                          accepts:
+                            allOf:
+                              - type: string
+                                pattern: "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\\
+                                  /([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"\
+                                  (?:[^\"\\\\]|\\.)*\"))*)$"
+                              - default: null
+                          capabilities:
+                            type: object
+                            additionalProperties: true
+                          uses:
+                            type: array
+                            items:
+                              type: string
+                              pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                        required:
+                          - uri
+                          - media-type
+                        allOf:
+                          - if:
+                              properties:
+                                media-type:
+                                  const: application/alto-costmap+json
+                                accepts:
+                                  const: null
+                            then:
+                              properties:
+                                capabilities:
+                                  type: object
+                                  properties:
+                                    cost-type-names:
+                                      type: array
+                                      items:
+                                        type: string
+                                      minItems: 1
+                                      maxItems: 1
+                                  required:
+                                    - cost-type-names
+                                  additionalProperties: true
+                              required:
+                                - uri
+                                - media-type
+                                - capabilities
+                          - if:
+                              properties:
+                                media-type:
+                                  const: application/alto-costmap+json
+                                accepts:
+                                  const: application/alto-costmapfilter+json
+                            then:
+                              properties:
+                                capabilities:
+                                  type: object
+                                  properties:
+                                    cost-type-names:
+                                      type: array
+                                      items:
+                                        type: string
+                                      minItems: 1
+                                    cost-constraints:
+                                      type: boolean
+                                      default: false
+                                  require:
+                                    - cost-type-names
+                                  additionalProperties: true
+                              required:
+                                - uri
+                                - media-type
+                                - capabilities
+                          - if:
+                              properties:
+                                media-type:
+                                  const: application/alto-endpointprop+json
+                                accepts:
+                                  const: application/alto-endpointpropparams+json
+                            then:
+                              properties:
+                                capabilities:
+                                  type: object
+                                  properties:
+                                    prop-types:
+                                      type: array
+                                      items:
+                                        oneOf:
+                                          - type: string
+                                            anyOf:
+                                              - pattern: ^[0-9a-zA-Z-:@_.]{1,64}\.pid$
+                                          - type: string
+                                            pattern: ^[0-9a-zA-Z-:_]{1,32}$
+                                      minItems: 1
+                                  required:
+                                    - prop-types
+                                  additionalProperties: true
+                              required:
+                                - uri
+                                - media-type
+                                - capabilities
+                          - if:
+                              properties:
+                                media-type:
+                                  const: application/alto-endpointcost+json
+                                accepts:
+                                  const: application/alto-endpointcostparams+json
+                            then:
+                              properties:
+                                capabilities:
+                                  type: object
+                                  properties:
+                                    cost-type-names:
+                                      type: array
+                                      items:
+                                        type: string
+                                      minItems: 1
+                                    cost-constraints:
+                                      type: boolean
+                                      default: false
+                                  require:
+                                    - cost-type-names
+                                  additionalProperties: true
+                              required:
+                                - uri
+                                - media-type
+                                - capabilities
+                      - if:
+                          properties:
+                            media-type:
+                              const: application/alto-costmap+json
+                            accepts:
+                              const: application/alto-costmapfilter+json
+                        then:
+                          properties:
+                            capabilities:
+                              allOf:
+                                - type: object
+                                  properties:
+                                    cost-type-names:
+                                      type: array
+                                      items:
+                                        type: string
+                                      minItems: 1
+                                    cost-constraints:
+                                      type: boolean
+                                      default: false
+                                  require:
+                                    - cost-type-names
+                                  additionalProperties: true
+                                - properties:
+                                    calendar-attributes:
+                                      type: object
+                                      properties:
+                                        cost-type-names:
+                                          type: array
+                                          items:
+                                            type: string
+                                          minItems: 1
+                                        time-interval-size:
+                                          type: number
+                                        number-of-intervals:
+                                          type: number
+                                      required:
+                                        - cost-type-names
+                                        - time-interval-size
+                                        - number-of-intervals
+                                      additionalProperties: true
+                      - if:
+                          properties:
+                            media-type:
+                              const: application/alto-endpointcost+json
+                            accepts:
+                              const: application/alto-endpointcostparams+json
+                        then:
+                          properties:
+                            capabilities:
+                              allOf:
+                                - type: object
+                                  properties:
+                                    cost-type-names:
+                                      type: array
+                                      items:
+                                        type: string
+                                      minItems: 1
+                                    cost-constraints:
+                                      type: boolean
+                                      default: false
+                                  require:
+                                    - cost-type-names
+                                  additionalProperties: true
+                                - properties:
+                                    calendar-attributes:
+                                      type: object
+                                      properties:
+                                        cost-type-names:
+                                          type: array
+                                          items:
+                                            type: string
+                                          minItems: 1
+                                        time-interval-size:
+                                          type: number
+                                        number-of-intervals:
+                                          type: number
+                                      required:
+                                        - cost-type-names
+                                        - time-interval-size
+                                        - number-of-intervals
+                                      additionalProperties: true
+  IRDResourceEntries:
+    allOf:
+      - type: object
+        patternProperties:
+          ^[0-9a-zA-Z-:@_.]{1,64}$:
+            type: object
+            properties:
+              uri:
+                type: string
+                pattern: ^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?$
+              media-type:
+                type: string
+                pattern: "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\\
+                  /([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"\
+                  (?:[^\"\\\\]|\\.)*\"))*)$"
+              accepts:
+                allOf:
+                  - type: string
+                    pattern: "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\\
+                      /([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"\
+                      (?:[^\"\\\\]|\\.)*\"))*)$"
+                  - default: null
+              capabilities:
+                type: object
+                additionalProperties: true
+              uses:
+                type: array
+                items:
+                  type: string
+                  pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+            required:
+              - uri
+              - media-type
+            allOf:
+              - if:
+                  properties:
+                    media-type:
+                      const: application/alto-costmap+json
+                    accepts:
+                      const: null
+                then:
+                  properties:
+                    capabilities:
+                      type: object
+                      properties:
+                        cost-type-names:
+                          type: array
+                          items:
+                            type: string
+                          minItems: 1
+                          maxItems: 1
+                      required:
+                        - cost-type-names
+                      additionalProperties: true
+                  required:
+                    - uri
+                    - media-type
+                    - capabilities
+              - if:
+                  properties:
+                    media-type:
+                      const: application/alto-costmap+json
+                    accepts:
+                      const: application/alto-costmapfilter+json
+                then:
+                  properties:
+                    capabilities:
+                      type: object
+                      properties:
+                        cost-type-names:
+                          type: array
+                          items:
+                            type: string
+                          minItems: 1
+                        cost-constraints:
+                          type: boolean
+                          default: false
+                      require:
+                        - cost-type-names
+                      additionalProperties: true
+                  required:
+                    - uri
+                    - media-type
+                    - capabilities
+              - if:
+                  properties:
+                    media-type:
+                      const: application/alto-endpointprop+json
+                    accepts:
+                      const: application/alto-endpointpropparams+json
+                then:
+                  properties:
+                    capabilities:
+                      type: object
+                      properties:
+                        prop-types:
+                          type: array
+                          items:
+                            oneOf:
+                              - type: string
+                                anyOf:
+                                  - pattern: ^[0-9a-zA-Z-:@_.]{1,64}\.pid$
+                              - type: string
+                                pattern: ^[0-9a-zA-Z-:_]{1,32}$
+                          minItems: 1
+                      required:
+                        - prop-types
+                      additionalProperties: true
+                  required:
+                    - uri
+                    - media-type
+                    - capabilities
+              - if:
+                  properties:
+                    media-type:
+                      const: application/alto-endpointcost+json
+                    accepts:
+                      const: application/alto-endpointcostparams+json
+                then:
+                  properties:
+                    capabilities:
+                      type: object
+                      properties:
+                        cost-type-names:
+                          type: array
+                          items:
+                            type: string
+                          minItems: 1
+                        cost-constraints:
+                          type: boolean
+                          default: false
+                      require:
+                        - cost-type-names
+                      additionalProperties: true
+                  required:
+                    - uri
+                    - media-type
+                    - capabilities
+        additionalProperties: false
+      - patternProperties:
+          ^[0-9a-zA-Z-:@_.]{1,64}$:
+            allOf:
+              - type: object
+                properties:
+                  uri:
+                    type: string
+                    pattern: ^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?$
+                  media-type:
+                    type: string
+                    pattern: "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\\
+                      /([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"\
+                      (?:[^\"\\\\]|\\.)*\"))*)$"
+                  accepts:
+                    allOf:
+                      - type: string
+                        pattern: "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\\
+                          /([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"\
+                          (?:[^\"\\\\]|\\.)*\"))*)$"
+                      - default: null
+                  capabilities:
+                    type: object
+                    additionalProperties: true
+                  uses:
+                    type: array
+                    items:
+                      type: string
+                      pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                required:
+                  - uri
+                  - media-type
+                allOf:
+                  - if:
+                      properties:
+                        media-type:
+                          const: application/alto-costmap+json
+                        accepts:
+                          const: null
+                    then:
+                      properties:
+                        capabilities:
+                          type: object
+                          properties:
+                            cost-type-names:
+                              type: array
+                              items:
+                                type: string
+                              minItems: 1
+                              maxItems: 1
+                          required:
+                            - cost-type-names
+                          additionalProperties: true
+                      required:
+                        - uri
+                        - media-type
+                        - capabilities
+                  - if:
+                      properties:
+                        media-type:
+                          const: application/alto-costmap+json
+                        accepts:
+                          const: application/alto-costmapfilter+json
+                    then:
+                      properties:
+                        capabilities:
+                          type: object
+                          properties:
+                            cost-type-names:
+                              type: array
+                              items:
+                                type: string
+                              minItems: 1
+                            cost-constraints:
+                              type: boolean
+                              default: false
+                          require:
+                            - cost-type-names
+                          additionalProperties: true
+                      required:
+                        - uri
+                        - media-type
+                        - capabilities
+                  - if:
+                      properties:
+                        media-type:
+                          const: application/alto-endpointprop+json
+                        accepts:
+                          const: application/alto-endpointpropparams+json
+                    then:
+                      properties:
+                        capabilities:
+                          type: object
+                          properties:
+                            prop-types:
+                              type: array
+                              items:
+                                oneOf:
+                                  - type: string
+                                    anyOf:
+                                      - pattern: ^[0-9a-zA-Z-:@_.]{1,64}\.pid$
+                                  - type: string
+                                    pattern: ^[0-9a-zA-Z-:_]{1,32}$
+                              minItems: 1
+                          required:
+                            - prop-types
+                          additionalProperties: true
+                      required:
+                        - uri
+                        - media-type
+                        - capabilities
+                  - if:
+                      properties:
+                        media-type:
+                          const: application/alto-endpointcost+json
+                        accepts:
+                          const: application/alto-endpointcostparams+json
+                    then:
+                      properties:
+                        capabilities:
+                          type: object
+                          properties:
+                            cost-type-names:
+                              type: array
+                              items:
+                                type: string
+                              minItems: 1
+                            cost-constraints:
+                              type: boolean
+                              default: false
+                          require:
+                            - cost-type-names
+                          additionalProperties: true
+                      required:
+                        - uri
+                        - media-type
+                        - capabilities
+              - if:
+                  properties:
+                    media-type:
+                      const: application/alto-costmap+json
+                    accepts:
+                      const: application/alto-costmapfilter+json
+                then:
+                  properties:
+                    capabilities:
+                      allOf:
+                        - type: object
+                          properties:
+                            cost-type-names:
+                              type: array
+                              items:
+                                type: string
+                              minItems: 1
+                            cost-constraints:
+                              type: boolean
+                              default: false
+                          require:
+                            - cost-type-names
+                          additionalProperties: true
+                        - properties:
+                            calendar-attributes:
+                              type: object
+                              properties:
+                                cost-type-names:
+                                  type: array
+                                  items:
+                                    type: string
+                                  minItems: 1
+                                time-interval-size:
+                                  type: number
+                                number-of-intervals:
+                                  type: number
+                              required:
+                                - cost-type-names
+                                - time-interval-size
+                                - number-of-intervals
+                              additionalProperties: true
+              - if:
+                  properties:
+                    media-type:
+                      const: application/alto-endpointcost+json
+                    accepts:
+                      const: application/alto-endpointcostparams+json
+                then:
+                  properties:
+                    capabilities:
+                      allOf:
+                        - type: object
+                          properties:
+                            cost-type-names:
+                              type: array
+                              items:
+                                type: string
+                              minItems: 1
+                            cost-constraints:
+                              type: boolean
+                              default: false
+                          require:
+                            - cost-type-names
+                          additionalProperties: true
+                        - properties:
+                            calendar-attributes:
+                              type: object
+                              properties:
+                                cost-type-names:
+                                  type: array
+                                  items:
+                                    type: string
+                                  minItems: 1
+                                time-interval-size:
+                                  type: number
+                                number-of-intervals:
+                                  type: number
+                              required:
+                                - cost-type-names
+                                - time-interval-size
+                                - number-of-intervals
+                              additionalProperties: true
+  IRDResourceEntry:
+    allOf:
+      - type: object
+        properties:
+          uri:
+            type: string
+            pattern: ^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?$
+          media-type:
+            type: string
+            pattern: "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\\
+              /([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"\
+              (?:[^\"\\\\]|\\.)*\"))*)$"
+          accepts:
+            allOf:
+              - type: string
+                pattern: "^(application|audio|font|example|image|message|model|multipart|text|video|x-(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+))\\\
+                  /([0-9A-Za-z!#$%&'*+.^_`|~-]+)((?:[ \t]*;[ \t]*[0-9A-Za-z!#$%&'*+.^_`|~-]+=(?:[0-9A-Za-z!#$%&'*+.^_`|~-]+|\"\
+                  (?:[^\"\\\\]|\\.)*\"))*)$"
+              - default: null
+          capabilities:
+            type: object
+            additionalProperties: true
+          uses:
+            type: array
+            items:
+              type: string
+              pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+        required:
+          - uri
+          - media-type
+        allOf:
+          - if:
+              properties:
+                media-type:
+                  const: application/alto-costmap+json
+                accepts:
+                  const: null
+            then:
+              properties:
+                capabilities:
+                  type: object
+                  properties:
+                    cost-type-names:
+                      type: array
+                      items:
+                        type: string
+                      minItems: 1
+                      maxItems: 1
+                  required:
+                    - cost-type-names
+                  additionalProperties: true
+              required:
+                - uri
+                - media-type
+                - capabilities
+          - if:
+              properties:
+                media-type:
+                  const: application/alto-costmap+json
+                accepts:
+                  const: application/alto-costmapfilter+json
+            then:
+              properties:
+                capabilities:
+                  type: object
+                  properties:
+                    cost-type-names:
+                      type: array
+                      items:
+                        type: string
+                      minItems: 1
+                    cost-constraints:
+                      type: boolean
+                      default: false
+                  require:
+                    - cost-type-names
+                  additionalProperties: true
+              required:
+                - uri
+                - media-type
+                - capabilities
+          - if:
+              properties:
+                media-type:
+                  const: application/alto-endpointprop+json
+                accepts:
+                  const: application/alto-endpointpropparams+json
+            then:
+              properties:
+                capabilities:
+                  type: object
+                  properties:
+                    prop-types:
+                      type: array
+                      items:
+                        oneOf:
+                          - type: string
+                            anyOf:
+                              - pattern: ^[0-9a-zA-Z-:@_.]{1,64}\.pid$
+                          - type: string
+                            pattern: ^[0-9a-zA-Z-:_]{1,32}$
+                      minItems: 1
+                  required:
+                    - prop-types
+                  additionalProperties: true
+              required:
+                - uri
+                - media-type
+                - capabilities
+          - if:
+              properties:
+                media-type:
+                  const: application/alto-endpointcost+json
+                accepts:
+                  const: application/alto-endpointcostparams+json
+            then:
+              properties:
+                capabilities:
+                  type: object
+                  properties:
+                    cost-type-names:
+                      type: array
+                      items:
+                        type: string
+                      minItems: 1
+                    cost-constraints:
+                      type: boolean
+                      default: false
+                  require:
+                    - cost-type-names
+                  additionalProperties: true
+              required:
+                - uri
+                - media-type
+                - capabilities
+      - if:
+          properties:
+            media-type:
+              const: application/alto-costmap+json
+            accepts:
+              const: application/alto-costmapfilter+json
+        then:
+          properties:
+            capabilities:
+              allOf:
+                - type: object
+                  properties:
+                    cost-type-names:
+                      type: array
+                      items:
+                        type: string
+                      minItems: 1
+                    cost-constraints:
+                      type: boolean
+                      default: false
+                  require:
+                    - cost-type-names
+                  additionalProperties: true
+                - properties:
+                    calendar-attributes:
+                      type: object
+                      properties:
+                        cost-type-names:
+                          type: array
+                          items:
+                            type: string
+                          minItems: 1
+                        time-interval-size:
+                          type: number
+                        number-of-intervals:
+                          type: number
+                      required:
+                        - cost-type-names
+                        - time-interval-size
+                        - number-of-intervals
+                      additionalProperties: true
+      - if:
+          properties:
+            media-type:
+              const: application/alto-endpointcost+json
+            accepts:
+              const: application/alto-endpointcostparams+json
+        then:
+          properties:
+            capabilities:
+              allOf:
+                - type: object
+                  properties:
+                    cost-type-names:
+                      type: array
+                      items:
+                        type: string
+                      minItems: 1
+                    cost-constraints:
+                      type: boolean
+                      default: false
+                  require:
+                    - cost-type-names
+                  additionalProperties: true
+                - properties:
+                    calendar-attributes:
+                      type: object
+                      properties:
+                        cost-type-names:
+                          type: array
+                          items:
+                            type: string
+                          minItems: 1
+                        time-interval-size:
+                          type: number
+                        number-of-intervals:
+                          type: number
+                      required:
+                        - cost-type-names
+                        - time-interval-size
+                        - number-of-intervals
+                      additionalProperties: true
+  FilteredCostMapCapabilities:
+    allOf:
+      - type: object
+        properties:
+          cost-type-names:
+            type: array
+            items:
+              type: string
+            minItems: 1
+          cost-constraints:
+            type: boolean
+            default: false
+        require:
+          - cost-type-names
+        additionalProperties: true
+      - properties:
+          calendar-attributes:
+            type: object
+            properties:
+              cost-type-names:
+                type: array
+                items:
+                  type: string
+                minItems: 1
+              time-interval-size:
+                type: number
+              number-of-intervals:
+                type: number
+            required:
+              - cost-type-names
+              - time-interval-size
+              - number-of-intervals
+            additionalProperties: true
+  CalendarAttributes:
+    type: object
+    properties:
+      cost-type-names:
+        type: array
+        items:
+          type: string
+        minItems: 1
+      time-interval-size:
+        type: number
+      number-of-intervals:
+        type: number
+    required:
+      - cost-type-names
+      - time-interval-size
+      - number-of-intervals
+    additionalProperties: true
+  CalendarResponseAttributes:
+    type: object
+    properties:
+      cost-type-names:
+        type: array
+        items:
+          type: string
+        minItems: 1
+      calendar-start-time:
+        type: string
+      time-interval-size:
+        type: number
+      number-of-intervals:
+        type: number
+      repeated:
+        type: number
+    required:
+      - calendar-start-time
+      - time-interval-size
+      - number-of-intervals
+    additionalProperties: true
+  ReqFilteredCostMap:
+    allOf:
+      - anyOf:
+          - type: object
+            properties:
+              cost-type:
+                type: object
+                properties:
+                  cost-mode:
+                    type: string
+                    enum:
+                      - numerical
+                      - ordinal
+                  cost-metric:
+                    anyOf:
+                      - type: string
+                        pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+                      - enum:
+                          - routingcost
+                          - delay-ow
+                          - delay-rt
+                          - delay-variation
+                          - hopcount
+                          - lossrate
+                          - tput
+                          - bw-residual
+                          - bw-maxres
+                required:
+                  - cost-mode
+                  - cost-metric
+              constraints:
+                type: array
+                items:
+                  type: string
+              pids:
+                type: object
+                properties:
+                  srcs:
+                    type: array
+                    items:
+                      type: string
+                      pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                  dsts:
+                    type: array
+                    items:
+                      type: string
+                      pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                required:
+                  - srcs
+                  - dsts
+                additionalProperties: true
+            required:
+              - cost-type
+            additionalProperties: true
+          - type: object
+            properties:
+              cost-type:
+                type: object
+                properties:
+                  cost-mode:
+                    type: string
+                    enum:
+                      - numerical
+                      - ordinal
+                  cost-metric:
+                    anyOf:
+                      - type: string
+                        pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+                      - enum:
+                          - routingcost
+                          - delay-ow
+                          - delay-rt
+                          - delay-variation
+                          - hopcount
+                          - lossrate
+                          - tput
+                          - bw-residual
+                          - bw-maxres
+                required:
+                  - cost-mode
+                  - cost-metric
+              multi-cost-types:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    cost-mode:
+                      type: string
+                      enum:
+                        - numerical
+                        - ordinal
+                    cost-metric:
+                      anyOf:
+                        - type: string
+                          pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+                        - enum:
+                            - routingcost
+                            - delay-ow
+                            - delay-rt
+                            - delay-variation
+                            - hopcount
+                            - lossrate
+                            - tput
+                            - bw-residual
+                            - bw-maxres
+                  required:
+                    - cost-mode
+                    - cost-metric
+                minItems: 1
+              testable-cost-types:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    cost-mode:
+                      type: string
+                      enum:
+                        - numerical
+                        - ordinal
+                    cost-metric:
+                      anyOf:
+                        - type: string
+                          pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+                        - enum:
+                            - routingcost
+                            - delay-ow
+                            - delay-rt
+                            - delay-variation
+                            - hopcount
+                            - lossrate
+                            - tput
+                            - bw-residual
+                            - bw-maxres
+                  required:
+                    - cost-mode
+                    - cost-metric
+                minItems: 1
+              constraints:
+                type: array
+                items:
+                  type: string
+              or-constraints:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: string
+                  minItems: 1
+                minItems: 1
+              pids:
+                type: object
+                properties:
+                  srcs:
+                    type: array
+                    items:
+                      type: string
+                      pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                  dsts:
+                    type: array
+                    items:
+                      type: string
+                      pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                required:
+                  - srcs
+                  - dsts
+                additionalProperties: true
+            additionalProperties: true
+            oneOf:
+              - required:
+                  - cost-type
+              - required:
+                  - multi-cost-types
+      - properties:
+          calendared:
+            type: array
+            items:
+              type: boolean
+            minItems: 1
+  InfoResourceCostMap:
+    allOf:
+      - anyOf:
+          - allOf:
+              - type: object
+                properties:
+                  meta:
+                    type: object
+                    additionalProperties: true
+                additionalProperties: true
+              - properties:
+                  meta:
+                    allOf:
+                      - allOf:
+                          - type: object
+                            additionalProperties: true
+                          - properties:
+                              vtag:
+                                type: object
+                                properties:
+                                  resource-id:
+                                    type: string
+                                    pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                                  tag:
+                                    type: string
+                                    pattern: ^[!-~]+$
+                                required:
+                                  - resource-id
+                                  - tag
+                              dependent-vtags:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    resource-id:
+                                      type: string
+                                      pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                                    tag:
+                                      type: string
+                                      pattern: ^[!-~]+$
+                                  required:
+                                    - resource-id
+                                    - tag
+                      - properties:
+                          dependent-vtags:
+                            minItems: 1
+                            maxItems: 1
+                          cost-type:
+                            type: object
+                            properties:
+                              cost-mode:
+                                type: string
+                                enum:
+                                  - numerical
+                                  - ordinal
+                              cost-metric:
+                                anyOf:
+                                  - type: string
+                                    pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+                                  - enum:
+                                      - routingcost
+                                      - delay-ow
+                                      - delay-rt
+                                      - delay-variation
+                                      - hopcount
+                                      - lossrate
+                                      - tput
+                                      - bw-residual
+                                      - bw-maxres
+                            required:
+                              - cost-mode
+                              - cost-metric
+                        required:
+                          - dependent-vtags
+                          - cost-type
+                  cost-map:
+                    type: object
+                    patternProperties:
+                      ^[0-9a-zA-Z-:@_.]{1,64}$:
+                        type: object
+                        patternProperties:
+                          ^[0-9a-zA-Z-:@_.]{1,64}$:
+                            anyOf:
+                              - type: string
+                              - type: number
+                              - type: array
+                              - type: boolean
+                              - type: 'null'
+                              - type: object
+                                additionalProperties: true
+                        additionalProperties: false
+                    additionalProperties: false
+                required:
+                  - meta
+                  - cost-map
+          - allOf:
+              - type: object
+                properties:
+                  meta:
+                    type: object
+                    additionalProperties: true
+                additionalProperties: true
+              - properties:
+                  meta:
+                    allOf:
+                      - allOf:
+                          - type: object
+                            additionalProperties: true
+                          - properties:
+                              vtag:
+                                type: object
+                                properties:
+                                  resource-id:
+                                    type: string
+                                    pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                                  tag:
+                                    type: string
+                                    pattern: ^[!-~]+$
+                                required:
+                                  - resource-id
+                                  - tag
+                              dependent-vtags:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    resource-id:
+                                      type: string
+                                      pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                                    tag:
+                                      type: string
+                                      pattern: ^[!-~]+$
+                                  required:
+                                    - resource-id
+                                    - tag
+                      - properties:
+                          dependent-vtags:
+                            minItems: 1
+                            maxItems: 1
+                          multi-cost-types:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                cost-mode:
+                                  type: string
+                                  enum:
+                                    - numerical
+                                    - ordinal
+                                cost-metric:
+                                  anyOf:
+                                    - type: string
+                                      pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+                                    - enum:
+                                        - routingcost
+                                        - delay-ow
+                                        - delay-rt
+                                        - delay-variation
+                                        - hopcount
+                                        - lossrate
+                                        - tput
+                                        - bw-residual
+                                        - bw-maxres
+                              required:
+                                - cost-mode
+                                - cost-metric
+                            minItems: 1
+                        required:
+                          - dependent-vtags
+                          - multi-cost-types
+                  cost-map:
+                    type: object
+                    patternProperties:
+                      ^[0-9a-zA-Z-:@_.]{1,64}$:
+                        type: object
+                        patternProperties:
+                          ^[0-9a-zA-Z-:@_.]{1,64}$:
+                            anyOf:
+                              - type: string
+                              - type: number
+                              - type: array
+                              - type: boolean
+                              - type: 'null'
+                              - type: object
+                                additionalProperties: true
+                        additionalProperties: false
+                    additionalProperties: false
+                required:
+                  - meta
+                  - cost-map
+      - properties:
+          meta:
+            calendar-response-attributes:
+              type: array
+              items:
+                type: object
+                properties:
+                  cost-type-names:
+                    type: array
+                    items:
+                      type: string
+                    minItems: 1
+                  calendar-start-time:
+                    type: string
+                  time-interval-size:
+                    type: number
+                  number-of-intervals:
+                    type: number
+                  repeated:
+                    type: number
+                required:
+                  - calendar-start-time
+                  - time-interval-size
+                  - number-of-intervals
+                additionalProperties: true
+              minItems: 1
+  ReqEndpointCostMap:
+    allOf:
+      - anyOf:
+          - type: object
+            properties:
+              cost-type:
+                type: object
+                properties:
+                  cost-mode:
+                    type: string
+                    enum:
+                      - numerical
+                      - ordinal
+                  cost-metric:
+                    anyOf:
+                      - type: string
+                        pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+                      - enum:
+                          - routingcost
+                          - delay-ow
+                          - delay-rt
+                          - delay-variation
+                          - hopcount
+                          - lossrate
+                          - tput
+                          - bw-residual
+                          - bw-maxres
+                required:
+                  - cost-mode
+                  - cost-metric
+              constraints:
+                type: array
+                items:
+                  type: string
+              endpoints:
+                type: object
+                properties:
+                  srcs:
+                    type: array
+                    items:
+                      type: string
+                      oneOf:
+                        - pattern: ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}
+                        - pattern: ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))
+                  dsts:
+                    type: array
+                    items:
+                      type: string
+                      oneOf:
+                        - pattern: ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}
+                        - pattern: ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))
+                additionalProperties: true
+            required:
+              - cost-type
+              - endpoints
+            additionalProperties: true
+          - type: object
+            properties:
+              cost-type:
+                type: object
+                properties:
+                  cost-mode:
+                    type: string
+                    enum:
+                      - numerical
+                      - ordinal
+                  cost-metric:
+                    anyOf:
+                      - type: string
+                        pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+                      - enum:
+                          - routingcost
+                          - delay-ow
+                          - delay-rt
+                          - delay-variation
+                          - hopcount
+                          - lossrate
+                          - tput
+                          - bw-residual
+                          - bw-maxres
+                required:
+                  - cost-mode
+                  - cost-metric
+              multi-cost-types:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    cost-mode:
+                      type: string
+                      enum:
+                        - numerical
+                        - ordinal
+                    cost-metric:
+                      anyOf:
+                        - type: string
+                          pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+                        - enum:
+                            - routingcost
+                            - delay-ow
+                            - delay-rt
+                            - delay-variation
+                            - hopcount
+                            - lossrate
+                            - tput
+                            - bw-residual
+                            - bw-maxres
+                  required:
+                    - cost-mode
+                    - cost-metric
+                minItems: 1
+              constraints:
+                type: array
+                items:
+                  type: string
+              testable-cost-types:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    cost-mode:
+                      type: string
+                      enum:
+                        - numerical
+                        - ordinal
+                    cost-metric:
+                      anyOf:
+                        - type: string
+                          pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+                        - enum:
+                            - routingcost
+                            - delay-ow
+                            - delay-rt
+                            - delay-variation
+                            - hopcount
+                            - lossrate
+                            - tput
+                            - bw-residual
+                            - bw-maxres
+                  required:
+                    - cost-mode
+                    - cost-metric
+                minItems: 1
+              or-constraints:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: string
+                  minItems: 1
+                minItems: 1
+              endpoints:
+                type: object
+                properties:
+                  srcs:
+                    type: array
+                    items:
+                      type: string
+                      oneOf:
+                        - pattern: ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}
+                        - pattern: ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))
+                  dsts:
+                    type: array
+                    items:
+                      type: string
+                      oneOf:
+                        - pattern: ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}
+                        - pattern: ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))
+                additionalProperties: true
+            additionalProperties: true
+            oneOf:
+              - required:
+                  - cost-type
+                  - endpoints
+              - required:
+                  - multi-cost-types
+                  - endpoints
+      - properties:
+          calendared:
+            type: array
+            items:
+              type: boolean
+            minItems: 1
+  InfoResourceEndpointCostMap:
+    allOf:
+      - anyOf:
+          - allOf:
+              - type: object
+                properties:
+                  meta:
+                    type: object
+                    additionalProperties: true
+                additionalProperties: true
+              - properties:
+                  meta:
+                    allOf:
+                      - allOf:
+                          - type: object
+                            additionalProperties: true
+                          - properties:
+                              vtag:
+                                type: object
+                                properties:
+                                  resource-id:
+                                    type: string
+                                    pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                                  tag:
+                                    type: string
+                                    pattern: ^[!-~]+$
+                                required:
+                                  - resource-id
+                                  - tag
+                              dependent-vtags:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    resource-id:
+                                      type: string
+                                      pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                                    tag:
+                                      type: string
+                                      pattern: ^[!-~]+$
+                                  required:
+                                    - resource-id
+                                    - tag
+                      - properties:
+                          cost-type:
+                            type: object
+                            properties:
+                              cost-mode:
+                                type: string
+                                enum:
+                                  - numerical
+                                  - ordinal
+                              cost-metric:
+                                anyOf:
+                                  - type: string
+                                    pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+                                  - enum:
+                                      - routingcost
+                                      - delay-ow
+                                      - delay-rt
+                                      - delay-variation
+                                      - hopcount
+                                      - lossrate
+                                      - tput
+                                      - bw-residual
+                                      - bw-maxres
+                            required:
+                              - cost-mode
+                              - cost-metric
+                        required:
+                          - cost-type
+                  endpoint-cost-map:
+                    type: object
+                    patternProperties:
+                      ^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}:
+                        type: object
+                        patternProperties:
+                          ^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}:
+                            anyOf:
+                              - type: string
+                              - type: number
+                              - type: array
+                              - type: boolean
+                              - type: 'null'
+                              - type: object
+                                additionalProperties: true
+                          ? ^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$
+                          : anyOf:
+                              - type: string
+                              - type: number
+                              - type: array
+                              - type: boolean
+                              - type: 'null'
+                              - type: object
+                                additionalProperties: true
+                        additionalProperties: false
+                      ? ^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$
+                      : type: object
+                        patternProperties:
+                          ^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}:
+                            anyOf:
+                              - type: string
+                              - type: number
+                              - type: array
+                              - type: boolean
+                              - type: 'null'
+                              - type: object
+                                additionalProperties: true
+                          ? ^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$
+                          : anyOf:
+                              - type: string
+                              - type: number
+                              - type: array
+                              - type: boolean
+                              - type: 'null'
+                              - type: object
+                                additionalProperties: true
+                        additionalProperties: false
+                    additionalProperties: false
+                required:
+                  - meta
+                  - endpoint-cost-map
+          - allOf:
+              - type: object
+                properties:
+                  meta:
+                    type: object
+                    additionalProperties: true
+                additionalProperties: true
+              - properties:
+                  meta:
+                    allOf:
+                      - allOf:
+                          - type: object
+                            additionalProperties: true
+                          - properties:
+                              vtag:
+                                type: object
+                                properties:
+                                  resource-id:
+                                    type: string
+                                    pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                                  tag:
+                                    type: string
+                                    pattern: ^[!-~]+$
+                                required:
+                                  - resource-id
+                                  - tag
+                              dependent-vtags:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    resource-id:
+                                      type: string
+                                      pattern: ^[0-9a-zA-Z-:@_.]{1,64}$
+                                    tag:
+                                      type: string
+                                      pattern: ^[!-~]+$
+                                  required:
+                                    - resource-id
+                                    - tag
+                      - properties:
+                          multi-cost-types:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                cost-mode:
+                                  type: string
+                                  enum:
+                                    - numerical
+                                    - ordinal
+                                cost-metric:
+                                  anyOf:
+                                    - type: string
+                                      pattern: ^[0-9a-zA-Z-:_.]{1,32}$
+                                    - enum:
+                                        - routingcost
+                                        - delay-ow
+                                        - delay-rt
+                                        - delay-variation
+                                        - hopcount
+                                        - lossrate
+                                        - tput
+                                        - bw-residual
+                                        - bw-maxres
+                              required:
+                                - cost-mode
+                                - cost-metric
+                            minItems: 1
+                        required:
+                          - multi-cost-types
+                  endpoint-cost-map:
+                    type: object
+                    patternProperties:
+                      ^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}:
+                        type: object
+                        patternProperties:
+                          ^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}:
+                            anyOf:
+                              - type: string
+                              - type: number
+                              - type: array
+                              - type: boolean
+                              - type: 'null'
+                              - type: object
+                                additionalProperties: true
+                          ? ^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$
+                          : anyOf:
+                              - type: string
+                              - type: number
+                              - type: array
+                              - type: boolean
+                              - type: 'null'
+                              - type: object
+                                additionalProperties: true
+                        additionalProperties: false
+                      ? ^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$
+                      : type: object
+                        patternProperties:
+                          ^ipv4:(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.|$)){4}:
+                            anyOf:
+                              - type: string
+                              - type: number
+                              - type: array
+                              - type: boolean
+                              - type: 'null'
+                              - type: object
+                                additionalProperties: true
+                          ? ^ipv6:((((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[a-zA-Z0-9]+)?)|((([^:]+:){6}(([^:]+:[^:]+)|(.*\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?;))$
+                          : anyOf:
+                              - type: string
+                              - type: number
+                              - type: array
+                              - type: boolean
+                              - type: 'null'
+                              - type: object
+                                additionalProperties: true
+                        additionalProperties: false
+                    additionalProperties: false
+                required:
+                  - meta
+                  - endpoint-cost-map
+      - properties:
+          meta:
+            calendar-response-attributes:
+              type: array
+              items:
+                type: object
+                properties:
+                  cost-type-names:
+                    type: array
+                    items:
+                      type: string
+                    minItems: 1
+                  calendar-start-time:
+                    type: string
+                  time-interval-size:
+                    type: number
+                  number-of-intervals:
+                    type: number
+                  repeated:
+                    type: number
+                required:
+                  - calendar-start-time
+                  - time-interval-size
+                  - number-of-intervals
+                additionalProperties: true
+              minItems: 1

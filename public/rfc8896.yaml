@@ -1,0 +1,128 @@
+$schema: http://json-schema.org/draft-07/schema#
+$id: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc8896.yaml
+definitions:
+  InfoResourceDirectory:
+    allOf:
+      - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/InfoResourceDirectory
+      - properties:
+          resources:
+            $ref: '#/definitions/IRDResourceEntries'
+  IRDResourceEntries:
+    allOf:
+      - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/IRDResourceEntries
+      - patternProperties:
+          ^[0-9a-zA-Z-:@_.]{1,64}$:
+            $ref: '#/definitions/IRDResourceEntry'
+  IRDResourceEntry:
+    allOf:
+      - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/IRDResourceEntry
+      - if:
+          properties:
+            media-type:
+              const: application/alto-costmap+json
+            accepts:
+              const: application/alto-costmapfilter+json
+        then:
+          properties:
+            capabilities:
+              $ref: '#/definitions/FilteredCostMapCapabilities'
+      - if:
+          properties:
+            media-type:
+              const: application/alto-endpointcost+json
+            accepts:
+              const: application/alto-endpointcostparams+json
+        then:
+          properties:
+            capabilities:
+              $ref: '#/definitions/FilteredCostMapCapabilities'
+  FilteredCostMapCapabilities:
+    allOf:
+      - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/FilteredCostMapCapabilities
+      - properties:
+          calendar-attributes:
+            $ref: '#/definitions/CalendarAttributes'
+  CalendarAttributes:
+    type: object
+    properties:
+      cost-type-names:
+        type: array
+        items:
+          type: string
+        minItems: 1
+      time-interval-size:
+        type: number
+      number-of-intervals:
+        type: number
+    required:
+      - cost-type-names
+      - time-interval-size
+      - number-of-intervals
+    additionalProperties: true
+  CalendarResponseAttributes:
+    type: object
+    properties:
+      cost-type-names:
+        type: array
+        items:
+          type: string
+        minItems: 1
+      calendar-start-time:
+        type: string
+      time-interval-size:
+        type: number
+      number-of-intervals:
+        type: number
+      repeated:
+        type: number
+    required:
+      - calendar-start-time
+      - time-interval-size
+      - number-of-intervals
+    additionalProperties: true
+  ReqFilteredCostMap:
+    allOf:
+      - anyOf:
+          - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/ReqFilteredCostMap
+          - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc8189.yaml#/definitions/ReqFilteredCostMap
+      - properties:
+          calendared:
+            type: array
+            items:
+              type: boolean
+            minItems: 1
+  InfoResourceCostMap:
+    allOf:
+      - anyOf:
+          - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/InfoResourceCostMap
+          - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc8189.yaml#/definitions/InfoResourceCostMap
+      - properties:
+          meta:
+            calendar-response-attributes:
+              type: array
+              items:
+                $ref: '#/definitions/CalendarResponseAttributes'
+              minItems: 1
+  ReqEndpointCostMap:
+    allOf:
+      - anyOf:
+          - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/ReqEndpointCostMap
+          - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc8189.yaml#/definitions/ReqEndpointCostMap
+      - properties:
+          calendared:
+            type: array
+            items:
+              type: boolean
+            minItems: 1
+  InfoResourceEndpointCostMap:
+    allOf:
+      - anyOf:
+          - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc7285.yaml#/definitions/InfoResourceEndpointCostMap
+          - $ref: https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public/rfc8189.yaml#/definitions/InfoResourceEndpointCostMap
+      - properties:
+          meta:
+            calendar-response-attributes:
+              type: array
+              items:
+                $ref: '#/definitions/CalendarResponseAttributes'
+              minItems: 1
