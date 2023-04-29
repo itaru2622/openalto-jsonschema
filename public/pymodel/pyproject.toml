@@ -1,0 +1,29 @@
+[build-system]
+requires        = ["setuptools"]
+#build-backend   = "setuptools.build_meta"
+
+[project]
+name            = "alto-datamodel"
+version         = "0.5.0"
+description     = "Data Model of IETF ALTO, generated from https://github.com/openalto/alto-jsonschema"
+authors         = [{ "name" = "itaru2622", email = "itaru2622@gmail.com" }]
+license         = {text = "MIT"}
+
+classifiers     = [
+                     "Topic :: IETF ALTO",
+                     "Topic :: Application-Layer Traffic Optimization(ALTO)",
+                     "Programming Language :: Python",
+                     "Programming Language :: Python :: 3",
+                     "License :: OSI Approved :: MIT License",
+                  ]
+
+dependencies    = ["pydantic", ]
+
+[project.urls]
+Homepage      = "https://datatracker.ietf.org/wg/alto/"
+Documentation = "https://github.com/openalto/alto-jsonschema"
+
+[tool.setuptools.packages.find]
+where =   [ "." ]
+include = [ "alto_datamodel*" ]
+exclude = ["build*", "tests*"]

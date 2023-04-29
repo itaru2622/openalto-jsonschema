@@ -3,7 +3,7 @@ msg_jsons := $(shell utils/generateTests)
 
 jsschema        := $(def_jsons) $(msg_jsons)
 jsschema_yamls  := $(jsschema:.json=.yaml)
-model_pys       := $(patsubst public/%.json,public/pymodel/%.py,$(jsschema))
+model_pys       := $(patsubst public/%.json,public/pymodel/alto_datamodel/pydantic/%.py,$(def_jsons)) $(patsubst public/%.json,public/pymodel/alto_datamodel/dataclass/%.py,$(def_jsons))
 openapi_jsons   := $(patsubst public/%.json,public/openapi/%.json,$(jsschema))
 openapi_yamls   := $(openapi_jsons:.json=.yaml)
 
@@ -12,8 +12,7 @@ oDir            =${PWD}/public
 #site           =https://raw.githubusercontent.com/openalto/alto-jsonschema/gh-pages
 site            =https://raw.githubusercontent.com/itaru2622/openalto-jsonschema/allinone/public
 
-opt_pymodel     =--target-python-version 3.11 --use-union-operator --output-model-type dataclasses.dataclass
-opt_pymodel     =
+#opt_pymodel     =--target-python-version 3.11 --use-union-operator
 
 define SITE_CONTENT
 # URI prefix for generated JSON schemas
@@ -35,6 +34,7 @@ config_yaml:
 public/rfc%.json: rfc%.yaml
 	emrichen -f config.yaml -f iana.yaml -o $@ --output-format json $<
 
+public/draft-ietf-alto-path-vector.json: public/draft-ietf-alto-unified-props-new.json
 public/draft-%.json: draft-%.yaml
 	emrichen -f config.yaml -f iana.yaml -o $@ --output-format json $<
 
@@ -43,21 +43,24 @@ public/message.%.json:
 
 public/%.yaml: public/%.json
 	cat $< | yq -y > $@
-public/openapi/%.yaml: public/openapi/%.json
-	cat $< | yq -y > $@
 
-# generate pydantic model from JSON Schema
-public/pymodel/%.py: public/%.json
-	-datamodel-codegen  --input-file-type jsonschema ${opt_pymodel}  --input $< --output $@
+# generate data model for python from JSON Schema
+public/pymodel/alto_datamodel/pydantic/%.py: public/%.json
+	datamodel-codegen  --input-file-type jsonschema --disable-timestamp --output-model-type pydantic.BaseModel    ${opt_pymodel}  --input $< --output $@
+public/pymodel/alto_datamodel/dataclass/%.py: public/%.json
+	datamodel-codegen  --input-file-type jsonschema --disable-timestamp --output-model-type dataclasses.dataclass ${opt_pymodel}  --input $< --output $@
 
 # generate OpenAPI Schema from JSON Schema
 # It requires option '-d' (de-ref remote reference) to avoid remaining 'if-then' clauses in OpenAPI Schema
 public/openapi/%.json: public/%.json
 	json-schema-to-openapi-schema convert -d $< | jq > $@
+public/openapi/%.yaml: public/openapi/%.json
+	cat $< | yq -y > $@
 
 publish:
 	-sed -i "s#${oDir}#${site}#g"                public/*.json public/*.yaml
-	-sed -i "s#${oDir}#${site}/pymodel#g"        public/pymodel/*.py
+	-sed -i "s#${oDir}#${site}/pymodel/alto_datamodel/pydantic#g"        public/pymodel/alto_datamodel/pydantic/*.py
+	-sed -i "s#${oDir}#${site}/pymodel/alto_datamodel/dataclass#g"       public/pymodel/alto_datamodel/dataclass/*.py
 	-sed -i "s#${oDir}#${site}/openapi#g"        public/openapi/*.json public/openapi/*.yaml
 	-sed -i "s/.json#/.yaml#/g"                  public/*.yaml public/openapi/*.yaml
 	-sed -i 's#id: \(.*\).json#id: \1.yaml#g'    public/*.yaml public/openapi/*.yaml
