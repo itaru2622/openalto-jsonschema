@@ -1,3 +1,6 @@
 emrichen==0.2.3
 jsonschema==3.2.0
-datamodel-code-generator[http]
+# pip install datamodel-code-generator[http] from github repo
+datamodel-code-generator[http] @ git+https://github.com/koxudaxi/datamodel-code-generator.git
+# datamodel-code-generator[http]
+#   https://github.com/koxudaxi/datamodel-code-generator.git
