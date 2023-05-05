@@ -53,7 +53,7 @@ class VersionTag(BaseModel):
 
 
 class TypedEndpointAddr(BaseModel):
-    __root__: Union[Any]
+    __root__: Any
 
 
 class AddressType(Enum):
@@ -359,9 +359,7 @@ class EndpointCostMapData(BaseModel):
 
 
 class CostType1(CostType):
-    cost_metric: Optional[Union[CostMetric, Union[Any]]] = Field(
-        None, alias='cost-metric'
-    )
+    cost_metric: Optional[Union[CostMetric, Any]] = Field(None, alias='cost-metric')
     cost_context: Optional[CostContext] = Field(None, alias='cost-context')
     description: Optional[str] = None
 

@@ -36,7 +36,7 @@ class VersionTag:
     tag: str
 
 
-TypedEndpointAddr = Union[Any]
+TypedEndpointAddr = Any
 
 
 class AddressType(Enum):
@@ -177,9 +177,7 @@ class Meta2(ServiceResponseMeta):
     cost_type: CostType
 
 
-EndpointDstCosts = Union[
-    Dict[str, Optional[Union[str, float, List, bool, Dict[str, Any]]]]
-]
+EndpointDstCosts = Dict[str, Optional[Union[str, float, List, bool, Dict[str, Any]]]]
 
 
 @dataclass
@@ -243,14 +241,14 @@ class Meta(ResponseMeta):
 
 @dataclass
 class InfoResourceDirectory(ResponseEntityBase):
-    meta: Optional[Meta] = None
     resources: IRDResourceEntries
+    meta: Optional[Meta] = None
 
 
 @dataclass
 class InfoResourceNetworkMap(ResponseEntityBase):
-    meta: Optional[ServiceResponseMeta] = None
     network_map: NetworkMapData
+    meta: Optional[ServiceResponseMeta] = None
 
 
 CostMapData = Dict[str, DstCosts]
@@ -263,17 +261,17 @@ class ReqFilteredCostMap1:
     pids: Optional[PIDFilter] = None
 
 
-EndpointPropertyMapData = Union[Dict[str, EndpointProps]]
+EndpointPropertyMapData = Dict[str, EndpointProps]
 
 
 @dataclass
 class ReqEndpointCostMap1:
     cost_type: CostType
-    constraints: Optional[List[str]] = None
     endpoints: EndpointFilter
+    constraints: Optional[List[str]] = None
 
 
-EndpointCostMapData = Union[Dict[str, EndpointDstCosts]]
+EndpointCostMapData = Dict[str, EndpointDstCosts]
 
 
 @dataclass
@@ -301,8 +299,8 @@ class InfoResourceCostMap(ResponseEntityBase):
 
 @dataclass
 class InfoResourceEndpointProperties(ResponseEntityBase):
-    meta: Optional[ServiceResponseMeta] = None
     endpoint_properties: EndpointPropertyMapData
+    meta: Optional[ServiceResponseMeta] = None
 
 
 @dataclass

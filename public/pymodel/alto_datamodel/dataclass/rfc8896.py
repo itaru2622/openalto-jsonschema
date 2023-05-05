@@ -38,7 +38,7 @@ class VersionTag:
     tag: str
 
 
-TypedEndpointAddr = Union[Any]
+TypedEndpointAddr = Any
 
 
 class AddressType(Enum):
@@ -179,9 +179,7 @@ class Meta2(ServiceResponseMeta):
     cost_type: CostType
 
 
-EndpointDstCosts = Union[
-    Dict[str, Optional[Union[str, float, List, bool, Dict[str, Any]]]]
-]
+EndpointDstCosts = Dict[str, Optional[Union[str, float, List, bool, Dict[str, Any]]]]
 
 
 @dataclass
@@ -203,15 +201,15 @@ class CalendarAttributes:
 
 @dataclass
 class CalendarResponseAttributes:
-    cost_type_names: Optional[List[str]] = None
     calendar_start_time: str
     time_interval_size: float
     number_of_intervals: float
+    cost_type_names: Optional[List[str]] = None
     repeated: Optional[float] = None
 
 
 @dataclass
-class ReqFilteredCostMap1:
+class ReqFilteredCostMap2:
     calendared: Optional[List[bool]] = None
 
 
@@ -256,17 +254,22 @@ class Meta4(ServiceResponseMeta):
 
 
 @dataclass
-class InfoResourceCostMap2:
+class InfoResourceCostMap3:
     meta: Optional[Any] = None
 
 
 @dataclass
-class ReqEndpointCostMap2:
+class ReqEndpointCostMap3:
     calendared: Optional[List[bool]] = None
 
 
 @dataclass
-class InfoResourceEndpointCostMap2:
+class ReqEndpointCostMap5(ReqEndpointCostMap1, ReqEndpointCostMap3):
+    pass
+
+
+@dataclass
+class InfoResourceEndpointCostMap3:
     meta: Optional[Any] = None
 
 
@@ -278,14 +281,14 @@ class Meta(ResponseMeta):
 
 @dataclass
 class InfoResourceDirectory(ResponseEntityBase):
-    meta: Optional[Meta] = None
     resources: IRDResourceEntries
+    meta: Optional[Meta] = None
 
 
 @dataclass
 class InfoResourceNetworkMap(ResponseEntityBase):
-    meta: Optional[ServiceResponseMeta] = None
     network_map: NetworkMapData
+    meta: Optional[ServiceResponseMeta] = None
 
 
 CostMapData = Dict[str, DstCosts]
@@ -298,22 +301,30 @@ class ReqFilteredCostMapModel:
     pids: Optional[PIDFilter] = None
 
 
-EndpointPropertyMapData = Union[Dict[str, EndpointProps]]
+EndpointPropertyMapData = Dict[str, EndpointProps]
 
 
 @dataclass
 class ReqEndpointCostMap:
     cost_type: CostType
-    constraints: Optional[List[str]] = None
     endpoints: EndpointFilter
+    constraints: Optional[List[str]] = None
 
 
-EndpointCostMapData = Union[Dict[str, EndpointDstCosts]]
+EndpointCostMapData = Dict[str, EndpointDstCosts]
 
 
 @dataclass
 class FilteredCostMapCapabilities1(FilteredCostMapCapabilities):
     calendar_attributes: Optional[CalendarAttributes] = None
+
+
+@dataclass
+class ReqFilteredCostMap3(ReqFilteredCostMapModel, ReqFilteredCostMap2):
+    pass
+
+
+ReqFilteredCostMap1 = ReqFilteredCostMap3
 
 
 @dataclass
@@ -334,6 +345,26 @@ class InfoResourceEndpointCostMap1(ResponseEntityBase):
 
 
 @dataclass
+class InfoResourceCostMap5(InfoResourceCostMap1, InfoResourceCostMap3):
+    pass
+
+
+@dataclass
+class ReqEndpointCostMap4(ReqEndpointCostMap, ReqEndpointCostMap3):
+    pass
+
+
+ReqEndpointCostMap2 = Union[ReqEndpointCostMap4, ReqEndpointCostMap5]
+
+
+@dataclass
+class InfoResourceEndpointCostMap5(
+    InfoResourceEndpointCostMap1, InfoResourceEndpointCostMap3
+):
+    pass
+
+
+@dataclass
 class InfoResourceCostMap(ResponseEntityBase):
     meta: Meta1
     cost_map: CostMapData
@@ -341,11 +372,31 @@ class InfoResourceCostMap(ResponseEntityBase):
 
 @dataclass
 class InfoResourceEndpointProperties(ResponseEntityBase):
-    meta: Optional[ServiceResponseMeta] = None
     endpoint_properties: EndpointPropertyMapData
+    meta: Optional[ServiceResponseMeta] = None
 
 
 @dataclass
 class InfoResourceEndpointCostMap(ResponseEntityBase):
     meta: Meta2
     endpoint_cost_map: EndpointCostMapData
+
+
+@dataclass
+class InfoResourceCostMap4(InfoResourceCostMap, InfoResourceCostMap3):
+    pass
+
+
+InfoResourceCostMap2 = Union[InfoResourceCostMap4, InfoResourceCostMap5]
+
+
+@dataclass
+class InfoResourceEndpointCostMap4(
+    InfoResourceEndpointCostMap, InfoResourceEndpointCostMap3
+):
+    pass
+
+
+InfoResourceEndpointCostMap2 = Union[
+    InfoResourceEndpointCostMap4, InfoResourceEndpointCostMap5
+]

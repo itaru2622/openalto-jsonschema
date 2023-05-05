@@ -76,7 +76,7 @@ class VersionTag(BaseModel):
 
 
 class TypedEndpointAddr(BaseModel):
-    __root__: Union[Any]
+    __root__: Any
 
 
 class AddressType(Enum):

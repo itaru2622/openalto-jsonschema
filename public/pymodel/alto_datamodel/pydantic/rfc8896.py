@@ -53,7 +53,7 @@ class VersionTag(BaseModel):
 
 
 class TypedEndpointAddr(BaseModel):
-    __root__: Union[Any]
+    __root__: Any
 
 
 class AddressType(Enum):
@@ -297,7 +297,7 @@ class CalendarResponseAttributes(BaseModel):
     repeated: Optional[float] = None
 
 
-class ReqFilteredCostMap1(BaseModel):
+class ReqFilteredCostMap2(BaseModel):
     calendared: Optional[List[bool]] = Field(None, min_items=1)
 
 
@@ -357,15 +357,19 @@ class Meta4(ServiceResponseMeta):
     multi_cost_types: List[CostType] = Field(..., alias='multi-cost-types', min_items=1)
 
 
-class InfoResourceCostMap2(BaseModel):
+class InfoResourceCostMap3(BaseModel):
     meta: Optional[Any] = None
 
 
-class ReqEndpointCostMap2(BaseModel):
+class ReqEndpointCostMap3(BaseModel):
     calendared: Optional[List[bool]] = Field(None, min_items=1)
 
 
-class InfoResourceEndpointCostMap2(BaseModel):
+class ReqEndpointCostMap5(ReqEndpointCostMap1, ReqEndpointCostMap3):
+    pass
+
+
+class InfoResourceEndpointCostMap3(BaseModel):
     meta: Optional[Any] = None
 
 
@@ -457,6 +461,14 @@ class FilteredCostMapCapabilities1(FilteredCostMapCapabilities):
     )
 
 
+class ReqFilteredCostMap3(ReqFilteredCostMapModel, ReqFilteredCostMap2):
+    pass
+
+
+class ReqFilteredCostMap1(BaseModel):
+    __root__: ReqFilteredCostMap3
+
+
 class InfoResourceDirectory2(InfoResourceDirectory):
     resources: Optional[IRDResourceEntriesModel] = None
 
@@ -469,6 +481,24 @@ class InfoResourceCostMap1(ResponseEntityBase):
 class InfoResourceEndpointCostMap1(ResponseEntityBase):
     meta: Meta4
     endpoint_cost_map: EndpointCostMapData = Field(..., alias='endpoint-cost-map')
+
+
+class InfoResourceCostMap5(InfoResourceCostMap1, InfoResourceCostMap3):
+    pass
+
+
+class ReqEndpointCostMap4(ReqEndpointCostMap, ReqEndpointCostMap3):
+    pass
+
+
+class ReqEndpointCostMap2(BaseModel):
+    __root__: Union[ReqEndpointCostMap4, ReqEndpointCostMap5]
+
+
+class InfoResourceEndpointCostMap5(
+    InfoResourceEndpointCostMap1, InfoResourceEndpointCostMap3
+):
+    pass
 
 
 class InfoResourceCostMap(ResponseEntityBase):
@@ -486,3 +516,21 @@ class InfoResourceEndpointProperties(ResponseEntityBase):
 class InfoResourceEndpointCostMap(ResponseEntityBase):
     meta: Meta2
     endpoint_cost_map: EndpointCostMapData = Field(..., alias='endpoint-cost-map')
+
+
+class InfoResourceCostMap4(InfoResourceCostMap, InfoResourceCostMap3):
+    pass
+
+
+class InfoResourceCostMap2(BaseModel):
+    __root__: Union[InfoResourceCostMap4, InfoResourceCostMap5]
+
+
+class InfoResourceEndpointCostMap4(
+    InfoResourceEndpointCostMap, InfoResourceEndpointCostMap3
+):
+    pass
+
+
+class InfoResourceEndpointCostMap2(BaseModel):
+    __root__: Union[InfoResourceEndpointCostMap4, InfoResourceEndpointCostMap5]
